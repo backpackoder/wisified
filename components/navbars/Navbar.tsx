@@ -11,11 +11,11 @@ import { API, ManyData, PrismaTag } from "@/types/prisma";
 import { getFilters as getFiltersAuthors } from "@/app/authors/utils/getFilters";
 import { getFilters as getFiltersQuotes } from "@/app/quotes/utils/getFilters";
 
-export function Navbar({ type, totalCount, dispatch }: NavbarProps) {
+export function Navbar({ type, data, dispatch, queryParamsTag }: NavbarProps) {
   const [tags, setTags] = useState<API<ManyData<PrismaTag>>>(null);
-  
-  const filtersAuthors = tags && getFiltersAuthors();
-  const filtersQuotes = tags && getFiltersQuotes({ tags: tags.data });
+
+  const filtersAuthors = getFiltersAuthors();
+  const filtersQuotes = tags && getFiltersQuotes({ tags: tags.data, queryParamsTag });
   const filters = type === "authors" ? filtersAuthors : filtersQuotes;
 
   function handleSelectChange(e: React.ChangeEvent<HTMLSelectElement>, title: string) {
@@ -23,6 +23,8 @@ export function Navbar({ type, totalCount, dispatch }: NavbarProps) {
   }
 
   useEffect(() => {
+    if (type === "authors") return;
+
     async function fetchData() {
       const data = await fetch("api/tags", {
         method: "GET",
@@ -35,12 +37,12 @@ export function Navbar({ type, totalCount, dispatch }: NavbarProps) {
     }
 
     fetchData();
-  }, []);
+  }, [type]);
 
-  return tags && filters ? (
+  return filters ? (
     <div className="flex flex-wrap justify-center gap-2 bg-sky-200 rounded-xl">
       <p className="flex items-center">
-        {totalCount} {totalCount === 1 ? "result" : "results"}
+        {data.totalCount} {data.totalCount === 1 ? "result" : "results"}
       </p>
 
       {filters.map((filter, index) => {
@@ -49,6 +51,7 @@ export function Navbar({ type, totalCount, dispatch }: NavbarProps) {
             <label htmlFor={filter.title} className="text-center">
               {filter.label}
             </label>
+
             <select
               name={filter.title}
               id={filter.title}

@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useReducer, useState } from "react";
+import { usePathname } from "next/navigation";
+
 import {
   API,
   ManyData,
@@ -8,8 +11,6 @@ import {
   PrismaLanguage,
   PrismaUser,
 } from "@/types/prisma";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useReducer, useState } from "react";
 import { wikiSummary } from "@/types/wikiResponse";
 import { getWikiData } from "@/utils/getWikiData";
 import { AuthCheck } from "@/components/AuthCheck";
@@ -22,21 +23,18 @@ import { Name } from "../../add/components/editor/Name";
 import { Description } from "../../add/components/editor/Description";
 import { Bio } from "../../add/components/editor/Bio";
 import { SubmitBtn } from "@/components/SubmitBtn";
-import { AuthorSubmitted } from "../../add/components/editor/AuthorSubmitted";
+import { AuthorSubmitted } from "../../add/components/AuthorSubmitted";
 
 export default function Edit() {
-  const queryParamsAuthor = useSearchParams().get("author");
-  const queryParamsId = useSearchParams().get("id");
+  const pathname = usePathname();
+  const AuthorNameFromSlug = decodeURIComponent(pathname.split("/")[2]);
 
   const [user, setUser] = useState<API<PrismaUser>>(null);
   const [translations, setTranslations] = useState<API<ManyData<PrismaLanguage>>>(null);
-  console.log("translations", translations);
   const [authorTranslations, setAuthorTranslations] =
     useState<API<ManyData<PrismaAuthorTranslation>>>(null);
-  console.log("authorTranslations", authorTranslations);
 
   const [state, dispatch] = useReducer<React.Reducer<State, Action>>(reducer, initialState);
-  console.log("state", state);
 
   function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -72,11 +70,11 @@ export default function Edit() {
     }
   }
 
-  async function addAuthor() {
-    if (!user || !queryParamsAuthor || !translations || !authorTranslations) return;
+  async function updateAuthor() {
+    if (!user || !AuthorNameFromSlug || !translations || !authorTranslations) return;
 
     const body: UpdateAuthorClientSide = {
-      englishName: queryParamsAuthor,
+      englishName: AuthorNameFromSlug,
       translations: state.names.map((name, index) => {
         return {
           translationId: authorTranslations?.data[index].id,
@@ -88,7 +86,7 @@ export default function Edit() {
       }),
     };
 
-    await fetch(`api/edit/${queryParamsId}`, {
+    await fetch(`api/edit/${AuthorNameFromSlug}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +122,7 @@ export default function Edit() {
 
   useEffect(() => {
     async function fetchAuthorData() {
-      const data = await fetch(`/api/edit/${queryParamsId}`, {
+      const data = await fetch(`/api/edit/${AuthorNameFromSlug}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -137,6 +135,8 @@ export default function Edit() {
       // IL FAUT DONC FAIRE UNE REQUETE AVEC TOUTES LES LANGUES POSSIBLES
       // AIDE : IL FAUT CHANGER LE STATE EN RAJOUTANT TOUTES LES LANGUES DU TABLEAU PRISMA LANGUAGES
       await data.json().then((data: PrismaAuthor) => {
+        if (!data) return;
+
         setAuthorTranslations({ count: data.translations.length, data: data.translations });
 
         dispatch({
@@ -161,7 +161,7 @@ export default function Edit() {
     }
 
     fetchAuthorData();
-  }, [queryParamsId, translations?.data]);
+  }, [AuthorNameFromSlug, translations?.data]);
 
   useEffect(() => {
     function isOk(res: API<wikiSummary>) {
@@ -174,26 +174,26 @@ export default function Edit() {
     }
 
     async function searchAuthor() {
-      queryParamsAuthor &&
-        (await getWikiData(queryParamsAuthor).then((res) => {
+      AuthorNameFromSlug &&
+        (await getWikiData(AuthorNameFromSlug).then((res) => {
           isOk(res);
         }));
     }
 
     searchAuthor();
-  }, [queryParamsAuthor]);
+  }, [AuthorNameFromSlug]);
 
   if (state.status === "submitted") {
     return <AuthorSubmitted state={state} dispatch={dispatch} text={"edited"} />;
   }
 
   return (
-    user &&
-    translations &&
-    state.names.length > 0 &&
-    (nameIndexFinder || nameIndexFinder === 0) && (
-      <AuthCheck>
-        <section className="flex flex-col gap-4">
+    <AuthCheck>
+      <section className="flex flex-col gap-4">
+        {user &&
+        translations &&
+        state.names.length > 0 &&
+        (nameIndexFinder || nameIndexFinder === 0) ? (
           <>
             <Preview state={state} />
 
@@ -205,11 +205,19 @@ export default function Edit() {
               <Name translations={translations.data} state={state} dispatch={dispatch} />
               <Description translations={translations.data} state={state} dispatch={dispatch} />
               <Bio translations={translations.data} state={state} dispatch={dispatch} />
-              <SubmitBtn handleData={addAuthor} />
+              <SubmitBtn handleData={updateAuthor} />
             </EditorWrapper>
           </>
-        </section>
-      </AuthCheck>
-    )
+        ) : (
+          <div className="text-center">
+            <p>
+              The author {'"'}
+              {decodeURIComponent(AuthorNameFromSlug)}
+              {'"'} doesn{"'"}t exist.
+            </p>
+          </div>
+        )}
+      </section>
+    </AuthCheck>
   );
 }

@@ -11,14 +11,14 @@ import { Pagination } from "@/components/Pagination";
 import { FILTERS } from "@/commons/commons";
 
 // Types
-import { Params } from "@/types/params";
+import { NavAuthorsParams } from "@/types/params";
 import { API, ManyData, PrismaAuthor } from "@/types/prisma";
 import { DispatchQuotesAndAuthors } from "@/types/authors";
 
 export default function Authors() {
   const [authors, setAuthors] = useState<API<ManyData<PrismaAuthor>>>(null);
 
-  const initialState: Params = {
+  const initialState: NavAuthorsParams = {
     page: 1,
     limit: 20,
     sortBy: FILTERS.NAME,
@@ -28,7 +28,7 @@ export default function Authors() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  function reducer(state: Params, action: DispatchQuotesAndAuthors) {
+  function reducer(state: NavAuthorsParams, action: DispatchQuotesAndAuthors) {
     return {
       ...state,
       [action.type]: action.payload,
@@ -53,17 +53,17 @@ export default function Authors() {
   return (
     authors && (
       <section className="flex flex-col gap-2">
-        <Navbar type="authors" totalCount={authors.count} dispatch={dispatch} />
+        <Navbar type="authors" data={authors} dispatch={dispatch} />
 
-        <Pagination data={authors.data} state={state} dispatch={dispatch} />
+        {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}
 
         <article className="flex flex-wrap justify-center gap-8">
           {authors.data.map((author, index) => {
-            return <AuthorCard key={index} author={author} state={state} />;
+            return <AuthorCard key={index} author={author} language={state.language} />;
           })}
         </article>
 
-        <Pagination data={authors.data} state={state} dispatch={dispatch} />
+        {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}
       </section>
     )
   );

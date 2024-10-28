@@ -27,7 +27,8 @@ export type WikiAuthorDatas =
 
 export default async function Author({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const slugWithSpaces = slugWithSpacesHandle(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const slugWithSpaces = slugWithSpacesHandle(decodedSlug);
 
   const author = await prisma.author.findFirst({
     where: {

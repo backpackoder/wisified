@@ -11,10 +11,10 @@ import { HelpInHover } from "../HelpInHover";
 import { ROUTES } from "@/commons/commons";
 
 // Types
-import { PrismaQuote } from "@/types/prisma";
+import { Quote } from "@prisma/client";
 
 export type QuoteIconsProps = {
-  quote: PrismaQuote;
+  quote: Quote;
 };
 
 export function QuoteIcons({ quote }: QuoteIconsProps) {

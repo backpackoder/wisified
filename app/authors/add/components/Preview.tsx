@@ -15,29 +15,17 @@ export function Preview({ state }: PreviewProps) {
 
   const actualLanguage = state.names.findIndex((name) => name.code === state.language);
 
-  const isStatusValid = state.status === "valid";
-
-  return (
+  return wikiData ? (
     <PreviewWrapper>
       <AuthorWrapper>
-        <h2 className="text-5xl">
-          {isStatusValid
-            ? state.names[actualLanguage]?.name !== ""
-              ? state.names[actualLanguage]?.name
-              : wikiData?.title
-            : wikiData?.title}
-        </h2>
+        <h2 className="text-5xl">{wikiData?.title}</h2>
 
-        <AuthorImg author={wikiData?.title} />
+        <AuthorImg authorName={wikiData?.title} />
 
-        <h3 className="text-lg">
-          {isStatusValid
-            ? state?.descriptions[actualLanguage]?.description
-            : state.wikiData?.description}
-        </h3>
+        <h3 className="text-lg">{state.wikiData?.description}</h3>
 
         <p>
-          {isStatusValid ? state.bio[actualLanguage]?.bio : state.wikiData?.extract}
+          {state.wikiData?.extract}
           <a
             href={wikiData?.content_urls.desktop.page}
             target="_blank"
@@ -48,5 +36,5 @@ export function Preview({ state }: PreviewProps) {
         </p>
       </AuthorWrapper>
     </PreviewWrapper>
-  );
+  ) : null;
 }

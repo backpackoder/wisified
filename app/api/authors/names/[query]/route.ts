@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+// Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function GET(req: Request, params: { params: { query: string } }) {
-  const author = await prisma.author.findMany({
+  const authors = await prisma.author.findMany({
     where: {
       translations: {
         some: {
@@ -14,15 +16,14 @@ export async function GET(req: Request, params: { params: { query: string } }) {
         },
       },
     },
-
     include: PRISMA_CALLS.authors.include,
   });
 
-  const count = author.length;
+  const count = authors.length;
 
   const data = {
     count,
-    data: author,
+    data: authors,
   };
 
   return NextResponse.json(data);

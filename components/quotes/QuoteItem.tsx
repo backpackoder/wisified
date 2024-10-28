@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // Components
 import { QuoteContainer } from "./QuoteContainer";
@@ -12,8 +13,6 @@ import { ROUTES } from "@/commons/commons";
 import { QuoteItemProps } from "@/types/props";
 
 export function QuoteItem({ quote }: QuoteItemProps) {
-  const creator = "My wise quotes";
-
   return quote ? (
     <QuoteContainer>
       <QuoteIcons quote={quote} />
@@ -22,18 +21,38 @@ export function QuoteItem({ quote }: QuoteItemProps) {
         {`- "${quote.translations[0].content}."`}
       </Link>
 
-      <AuthorImg author={quote.author.translations[0].name} image={{ width: 100 }} />
+      <AuthorImg authorName={quote.author.englishName} image={{ width: 100 }} />
 
-      <Link href={ROUTES.AUTHOR(quote.authorId)} className="cursor-pointer hover:text-[#a3a3a3]">
-        - {quote.author.translations[0].name}
+      <Link
+        href={ROUTES.AUTHOR(quote.author.englishName)}
+        className="cursor-pointer hover:text-[#a3a3a3]"
+      >
+        - {quote.author.englishName}
       </Link>
 
-      <p className="text-xs italic">
+      <p>
         Added by{" "}
-        <Link href={ROUTES.USER(creator)} className="font-semibold">
-          {creator}
+        <Link
+          href={ROUTES.USER(quote?.createdById)}
+          className="font-semibold italic duration-200 hover:text-gray-500"
+        >
+          {quote.createdBy.name ?? quote.createdBy.username}
         </Link>
       </p>
+
+      <div className="flex flex-wrap gap-2">
+        {quote.tags.map((tag) => {
+          return (
+            <Link
+              key={tag.id}
+              href={`${ROUTES.QUOTES}?tag=${tag.englishName}`}
+              className="cursor-pointer bg-blue-200 p-2 rounded-md duration-200 hover:bg-blue-300"
+            >
+              {tag.englishName}
+            </Link>
+          );
+        })}
+      </div>
     </QuoteContainer>
   ) : null;
 }

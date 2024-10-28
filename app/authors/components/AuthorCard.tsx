@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 // Types
-import { Params } from "@/types/params";
 import { PrismaAuthor } from "@/types/prisma";
 
 // Utils
@@ -14,33 +13,38 @@ import { ROUTES } from "@/commons/commons";
 
 // Components
 import { AuthorImg } from "@/components/quotes/AuthorImg";
+import { useEffect, useState } from "react";
+import { getWikiData } from "@/utils/getWikiData";
 
 type AuthorCardProps = {
   author: PrismaAuthor;
-  state: Params;
+  language: string;
 };
 
-export function Ar() {
-  return <p>e</p>;
-}
-
-export function AuthorCard({ author, state }: AuthorCardProps) {
+export function AuthorCard({ author, language }: AuthorCardProps) {
   const englishName = author.englishName;
+  const [description, setDescription] = useState<string>("");
 
-  const findLanguageIndex = languageIndexFinder({
-    data: author.translations,
-    values: ["language", "code"],
-    search: state.language,
-  });
+  // const findLanguageIndex = languageIndexFinder({
+  //   data: author.translations,
+  //   values: ["language", "code"],
+  //   search: language,
+  // });
 
-  const name = findLanguageIndex === -1 ? englishName : author.translations[findLanguageIndex].name;
-  const description =
-    findLanguageIndex === -1 ? "" : author.translations[findLanguageIndex].description;
+  // const name = findLanguageIndex === -1 ? englishName : author.translations[findLanguageIndex].name;
+
+  useEffect(() => {
+    async function getDescriptionFromWiki() {
+      await getWikiData(englishName).then((data) => setDescription(data?.description ?? ""));
+    }
+
+    getDescriptionFromWiki();
+  }, [englishName]);
 
   return (
-    <div className="group flex flex-col items-center bg-blue-200 p-4  rounded-lg duration-300 hover:bg-blue-300">
+    <div className="group flex flex-col items-center gap-1 max-w-[200px] bg-blue-200 px-2 py-4 text-center rounded-lg duration-300 hover:bg-blue-300">
       <Link href={ROUTES.AUTHOR(englishName)} className="text-2xl">
-        {name}
+        {englishName}
       </Link>
 
       <small>
@@ -48,10 +52,12 @@ export function AuthorCard({ author, state }: AuthorCardProps) {
       </small>
 
       <div className="flex items-center justify-center w-4/5 h-full rounded-lg overflow-hidden mt-2">
-        <AuthorImg author={englishName} />
+        <AuthorImg authorName={englishName} />
       </div>
 
-      <h3>{description}</h3>
+      <h3 className="leading-tight">
+        <small>{description}</small>
+      </h3>
 
       <Link
         href={ROUTES.AUTHOR(englishName)}

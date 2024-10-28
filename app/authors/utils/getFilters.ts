@@ -27,7 +27,7 @@ export function getFilters() {
         { value: "createdAt", label: "date added" },
         { value: "updatedAt", label: "date modified" },
         { value: "englishName", label: "name" },
-        { value: "quotes", label: "nb of quotes" },
+        { value: "quotes", label: "quotes" },
       ],
     },
   };
@@ -44,20 +44,20 @@ export function getFilters() {
     },
   };
 
-  const language: Filter<Language["code"]> = {
-    title: "language",
-    label: "Language",
-    values: {
-      default: { value: "en", label: "English" },
-      others: [
-        ...LANGUAGES.map((language) => {
-          return { value: language.code, label: language.nativeName };
-        }),
-      ],
-    },
-  };
+  // const language: Filter<Language["code"]> = {
+  //   title: "language",
+  //   label: "Language",
+  //   values: {
+  //     default: { value: "en", label: "English" },
+  //     others: [
+  //       ...LANGUAGES.map((language) => {
+  //         return { value: language.code, label: language.nativeName };
+  //       }),
+  //     ],
+  //   },
+  // };
 
-  const FILTERS = [limit, sortBy, order, language];
+  const FILTERS = [limit, sortBy, order];
 
   return FILTERS;
 }

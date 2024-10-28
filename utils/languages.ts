@@ -3,17 +3,23 @@ export const appLanguages = {
   en: {
     title: "English",
     englishTitle: "English",
+    nativeTitle: "English",
     code: "en",
-  },
-  es: {
-    title: "Español",
-    englishTitle: "Spanish",
-    code: "es",
+    flag: "/flags/en.jpg",
   },
   fr: {
     title: "Français",
     englishTitle: "French",
+    nativeTitle: "Français",
     code: "fr",
+    flag: "/flags/fr.jpg",
+  },
+  es: {
+    title: "Español",
+    englishTitle: "Spanish",
+    nativeTitle: "Español",
+    code: "es",
+    flag: "/flags/es.jpg",
   },
 };
 

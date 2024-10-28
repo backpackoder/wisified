@@ -28,8 +28,6 @@ export function UserDataEditor({
     return "";
   }
   const data = getUserData();
-  console.log("data", data);
-
   const [value, setValue] = useState(data);
   const [isUsernameTaken, setIsUsernameTaken] = useState(false);
 

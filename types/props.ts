@@ -1,8 +1,8 @@
 // Types
 import { Items } from "./navbar";
 import { DispatchQuotesAndAuthors } from "./authors";
-import { User } from "@prisma/client";
-import { PrismaAuthor, PrismaQuote } from "./prisma";
+import { Author, Quote, QuoteTranslation, Tag, User } from "@prisma/client";
+import { ManyData, PrismaAuthor, PrismaQuote } from "./prisma";
 import { StaticImageData } from "next/image";
 
 // LAYOUT
@@ -38,8 +38,9 @@ export type DiscoverQuotesAndAuthorsItemProps = DiscoverQuotesAndAuthorsProps & 
 // NAVBAR
 export type NavbarProps = {
   type: string;
-  totalCount: number;
+  data: ManyData<PrismaQuote | PrismaAuthor>;
   dispatch: React.Dispatch<DispatchQuotesAndAuthors>;
+  queryParamsTag?: string | null;
 };
 
 export type NavbarItemsProps = {
@@ -49,7 +50,7 @@ export type NavbarItemsProps = {
 
 // NAVIGATION
 export type PaginationProps = {
-  data: PrismaQuote[] | PrismaAuthor[];
+  data: ManyData<PrismaQuote | PrismaAuthor>;
   state: any;
   dispatch: React.Dispatch<any>;
 };
@@ -69,7 +70,7 @@ export type InputAuthorProps = {
 };
 
 export type AuthorImgProps = {
-  author: string | undefined;
+  authorName: string;
   image?: {
     width?: number;
     height?: number;
@@ -78,8 +79,7 @@ export type AuthorImgProps = {
 
 // QUOTES
 export type QuoteItemProps = {
-  // quote: PrismaQuote;
-  quote: any;
+  quote: PrismaQuote;
 };
 
 // USER PROFILE

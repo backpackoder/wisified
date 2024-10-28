@@ -63,7 +63,7 @@ export async function UserCard({ id, username, name, nationality, image }: UserC
           href={isProfileMine ? ROUTES.DASHBOARD : ROUTES.USER(id)}
           className="bg-green-500 py-1 px-2 rounded-lg duration-150 hover:bg-green-300"
         >
-          Go to user page
+          {isProfileMine ? "Go to dashboard" : "Go to user page"}
         </Link>
       </div>
     </div>

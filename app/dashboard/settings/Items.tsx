@@ -12,6 +12,7 @@ import toCapitalize from "@/utils/toCapitalize";
 
 // Types
 import { UserItemProps, UserSettingsItemProps } from "@/types/props";
+import { appLanguages } from "@/utils/languages";
 
 export function ImageProfileItem({ type, user, handleModifiedData, Component }: UserItemProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -84,7 +85,7 @@ export function LanguageItem({ typeSettings, user }: Omit<UserSettingsItemProps,
       [typeSettings]: value,
     };
 
-    const res = await fetch("/api/user/settings", {
+    const res = await fetch("/api/user", {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
@@ -102,13 +103,16 @@ export function LanguageItem({ typeSettings, user }: Omit<UserSettingsItemProps,
       <select
         name={typeSettings}
         defaultValue={user.language.toLocaleString() ?? ""}
-        // value={userSettings.language.toLocaleString() ?? ""}
         className="p-2 border-2 rounded-lg"
         onChange={(e) => updateUserSettings(e)}
       >
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="es">Español</option>
+        {Object.values(appLanguages).map((language, index) => {
+          return (
+            <option key={index} value={language.code}>
+              {language.nativeTitle}
+            </option>
+          );
+        })}
       </select>
     </div>
   );
@@ -122,7 +126,7 @@ export function EmailUpdatesItem({ typeSettings, user }: Omit<UserSettingsItemPr
       [typeSettings]: value,
     };
 
-    const res = await fetch("/api/user/settings", {
+    const res = await fetch("/api/user", {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {

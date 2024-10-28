@@ -6,9 +6,10 @@ import { Language } from "@prisma/client";
 
 type GetFiltersProps = {
   tags: PrismaTag[];
+  queryParamsTag?: string | null;
 };
 
-export function getFilters({ tags }: GetFiltersProps) {
+export function getFilters({ tags, queryParamsTag }: GetFiltersProps) {
   const limit: Filter<number> = {
     title: "limit",
     label: "Results per page",
@@ -32,8 +33,6 @@ export function getFilters({ tags }: GetFiltersProps) {
       others: [
         { value: "createdAt", label: "date added" },
         { value: "updatedAt", label: "date modified" },
-        { value: "author", label: "author" },
-        { value: "content", label: "content" },
       ],
     },
   };
@@ -51,15 +50,15 @@ export function getFilters({ tags }: GetFiltersProps) {
   };
 
   const tagsFilter: Filter<string> = {
-    title: "tags",
+    title: "tag",
     label: "Tags",
     values: {
-      default: { value: "", label: "all" },
+      default: { value: queryParamsTag ?? "default", label: queryParamsTag ?? "all" },
       others: [
-        { value: "", label: "all" },
+        { value: "default", label: "all" },
         ...tags.map((tag) => ({
-          value: tag.translations[0]?.name,
-          label: tag.translations[0]?.name,
+          value: tag.englishName,
+          label: tag.englishName,
         })),
       ],
     },

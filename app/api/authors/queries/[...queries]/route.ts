@@ -15,52 +15,46 @@ export async function GET(req: Request, { params }: { params: { queries: string[
   const page = defaultChecker(params.queries[0]);
   const limit = defaultChecker(params.queries[1]);
   const sortBy = defaultChecker(params.queries[2]);
-  const order = defaultChecker(params.queries[3]);
-  const language = defaultChecker(params.queries[4]);
+  const order = defaultChecker(params.queries[3]) as "asc" | "desc";
+  // const language = defaultChecker(params.queries[4]);
 
-  const where = language
-    ? {
-        translations: {
-          some: {
-            language: {
-              code: language,
-            },
-          },
-        },
-      }
-    : undefined;
+  // const where = language
+  //   ? {
+  //       translations: {
+  //         some: {
+  //           language: {
+  //             code: language,
+  //           },
+  //         },
+  //       },
+  //     }
+  //   : undefined;
 
-  const authors = await prisma.author.findMany({
-    where,
+  try {
+    const totalCount = await prisma.author.findMany({
+      include: PRISMA_CALLS.authors.include,
+    });
 
-    include: PRISMA_CALLS.authors.include,
+    const authors = await prisma.author.findMany({
+      include: PRISMA_CALLS.authors.include,
+      orderBy: sortBy === "quotes" ? { quotes: { _count: order } } : { [sortBy]: order },
+      skip: (Number(page) - 1) * Number(limit),
+      take: Number(limit),
+    });
 
-    orderBy: {
-      // [sortBy]: sortBy === "quotes" ? { quotes: { _count: "asc" } } : order,
-      [sortBy]: order,
-    },
+    const countOnActualPage = authors.length;
 
-    skip: (Number(page) - 1) * Number(limit),
+    const data = {
+      totalCount: totalCount.length,
+      countOnActualPage,
+      totalPages: Math.ceil(totalCount.length / Number(limit)),
+      data: authors,
+    };
 
-    take: Number(limit),
-  });
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error fetching authors:", error);
 
-  const count = authors.length;
-
-  const data = {
-    count,
-    data: authors,
-  };
-
-  return NextResponse.json(data);
-}
-
-export async function POST(req: Request) {
-  const data = await req.json();
-
-  const author = await prisma.author.create({
-    data,
-  });
-
-  return NextResponse.json(author);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }

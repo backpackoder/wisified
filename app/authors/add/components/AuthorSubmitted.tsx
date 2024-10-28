@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { Dispatch } from "react";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
 
 // Types
-import { Action, State } from "../../types";
+import { Action, State } from "../types";
+import { Dispatch } from "react";
 
 type AuthorSubmittedProps = {
   state: State;
@@ -23,12 +23,13 @@ export function AuthorSubmitted({ state, dispatch, text = "submitted" }: AuthorS
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-4">
-        <button
+        <Link
+          href={ROUTES.AUTHOR_ADD}
           onClick={() => dispatch({ type: "RESET" })}
           className="bg-green-500 text-white p-2 rounded-md"
         >
           Add another author
-        </button>
+        </Link>
 
         <Link href={ROUTES.QUOTE_ADD} className="bg-green-500 text-white p-2 rounded-md">
           Add the first {state.wikiData.title}

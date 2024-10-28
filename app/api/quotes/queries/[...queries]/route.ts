@@ -14,8 +14,8 @@ export async function GET(req: Request, { params }: { params: { queries: string[
   const sortBy = defaultChecker(params.queries[2]);
   const order = defaultChecker(params.queries[3]);
   const language = defaultChecker(params.queries[4]);
-  const author = defaultChecker(params.queries[5]);
-  const tag = defaultChecker(params.queries[6]);
+  const tag = defaultChecker(params.queries[5]);
+  const author = defaultChecker(params.queries[6]);
 
   const where = language
     ? {
@@ -59,83 +59,99 @@ export async function GET(req: Request, { params }: { params: { queries: string[
       }
     : undefined;
 
-  const quotes = await prisma.quote.findMany({
-    where,
-
-    include: {
-      createdBy: true,
-      translations: {
-        where: {
-          language: {
-            code: {
-              startsWith: language,
-              endsWith: language,
-            },
-          },
-        },
-        include: {
-          language: true,
-        },
-      },
-      tags: {
-        include: {
-          translations: {
-            where: {
-              name: {
-                startsWith: tag,
-                endsWith: tag,
-              },
-            },
-            include: {
-              language: true,
-            },
+  const include = {
+    createdBy: true,
+    translations: {
+      where: {
+        language: {
+          code: {
+            startsWith: language,
+            endsWith: language,
           },
         },
       },
-      author: {
-        include: {
-          translations: true,
+      include: {
+        language: true,
+      },
+    },
+    tags: {
+      include: {
+        translations: {
+          where: {
+            name: {
+              startsWith: tag,
+              endsWith: tag,
+            },
+          },
+          include: {
+            language: true,
+          },
         },
       },
-      comments: {
-        include: {
-          user: true,
-          likes: {
-            include: {
-              user: true,
-              replies: {
-                include: {
-                  user: true,
-                  likes: {
-                    include: {
-                      user: true,
-                    },
+    },
+    author: {
+      include: {
+        translations: true,
+      },
+    },
+    comments: {
+      include: {
+        user: true,
+        likes: {
+          include: {
+            user: true,
+            replies: {
+              include: {
+                user: true,
+                likes: {
+                  include: {
+                    user: true,
                   },
                 },
               },
             },
           },
-          replies: {
-            include: {
-              user: true,
-              likes: {
-                include: {
-                  user: true,
-                },
+        },
+        replies: {
+          include: {
+            user: true,
+            likes: {
+              include: {
+                user: true,
               },
             },
           },
         },
       },
     },
+  };
+
+  const totalCount = await prisma.quote.findMany({
+    where,
+
+    include,
+  });
+
+  const quotes = await prisma.quote.findMany({
+    where,
+
+    include,
+
+    orderBy: {
+      [sortBy]: order,
+    },
+
+    skip: (Number(page) - 1) * Number(limit),
 
     take: Number(limit),
   });
 
-  const count = quotes.length;
+  const countOnActualPage = quotes.length;
 
   const data = {
-    count,
+    totalCount: totalCount.length,
+    countOnActualPage,
+    totalPages: Math.ceil(totalCount.length / Number(limit)),
     data: quotes,
   };
 

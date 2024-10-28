@@ -51,6 +51,14 @@ export const PRISMA_CALLS = {
 
   authors: {
     include: {
+      translations: {
+        include: {
+          language: true,
+        },
+      },
+      _count: {
+        select: { quotes: true },
+      },
       quotes: {
         include: {
           translations: {
@@ -58,20 +66,6 @@ export const PRISMA_CALLS = {
               language: true,
             },
           },
-          author: {
-            include: {
-              translations: {
-                include: {
-                  language: true,
-                },
-              },
-            },
-          },
-        },
-      },
-      translations: {
-        include: {
-          language: true,
         },
       },
     },

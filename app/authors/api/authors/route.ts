@@ -1,10 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function GET(req: Request) {
-  const authors = await prisma.author.findMany();
+  const authors = await prisma.author.findMany({
+    include: PRISMA_CALLS.authors.include,
+  });
 
-  return NextResponse.json(authors);
+  const count = authors.length;
+
+  const data = {
+    count,
+    data: authors,
+  };
+
+  return NextResponse.json(data);
 }
 
 export async function POST(req: Request) {

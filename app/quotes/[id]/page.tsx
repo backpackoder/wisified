@@ -6,9 +6,6 @@ import { QuoteItem } from "@/components/quotes/QuoteItem";
 // Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
-// Types
-import { Quote } from "@/types/API";
-
 export default async function Quote({ params }: { params: { id: string } }) {
   const { id } = params;
 
@@ -19,6 +16,7 @@ export default async function Quote({ params }: { params: { id: string } }) {
 
     include: PRISMA_CALLS.quotes.include,
   });
+  console.log("SKBDI", quote);
 
   return (
     quote && (

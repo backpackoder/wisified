@@ -8,12 +8,11 @@ import { GoToPageItemProps, PaginationProps } from "@/types/props";
 
 export function Pagination({ data, state, dispatch }: PaginationProps) {
   function prevPage() {
-    dispatch({ type: "page", payload: state.page === 1 ? data : state.page - 1 });
+    dispatch({ type: "page", payload: state.page === 1 ? data.totalPages : state.page - 1 });
   }
 
   function nextPage() {
-    console.log("nextPage");
-    dispatch({ type: "page", payload: state.page === data ? 1 : state.page + 1 });
+    dispatch({ type: "page", payload: state.page === data.totalPages ? 1 : state.page + 1 });
   }
 
   function GoToPage({ direction, number }: { direction: string; number: number }) {

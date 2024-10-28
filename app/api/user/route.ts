@@ -6,29 +6,40 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/utils/authOptions";
 
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions);
-  const currentUserEmail = session?.user?.email;
+  try {
+    const session = await getServerSession(authOptions);
+    const currentUserEmail = session?.user?.email;
 
-  const user = currentUserEmail
-    ? await prisma.user.findUnique({
-        where: { email: currentUserEmail },
-      })
-    : null;
+    const user = currentUserEmail
+      ? await prisma.user.findUnique({
+          where: { email: currentUserEmail },
+        })
+      : null;
 
-  return NextResponse.json(user);
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("Error in GET:", error);
+    return NextResponse.json({ error: "Failed to fetch user data." }, { status: 500 });
+  }
 }
 
 export async function PUT(req: Request) {
-  const session = await getServerSession(authOptions);
-  const currentUserEmail = session?.user?.email!;
+  try {
+    const session = await getServerSession(authOptions);
+    const currentUserEmail = session?.user?.email;
+    if (!currentUserEmail) throw new Error("User not authenticated");
 
-  const data = await req.json();
-  data.age = data.age && Number(data.age);
+    const data = await req.json();
+    data.age = data.age && Number(data.age);
 
-  const user = await prisma.user.update({
-    where: { email: currentUserEmail },
-    data,
-  });
+    const user = await prisma.user.update({
+      where: { email: currentUserEmail },
+      data,
+    });
 
-  return NextResponse.json(user);
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error("Error in PUT:", error);
+    return NextResponse.json({ error: "Failed to update user data." }, { status: 500 });
+  }
 }

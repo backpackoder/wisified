@@ -15,7 +15,9 @@ import {
 export type API<T> = T | null | undefined;
 
 export type ManyData<T> = {
-  count: number;
+  totalCount: number;
+  countOnActualPage: number;
+  totalPages: number;
   data: T[];
 };
 
@@ -25,6 +27,15 @@ export interface PrismaUser extends User {
   comments: Comment[];
   commentLikes: CommentLike[];
   // commentReplies: commentReply[];
+}
+
+export interface PrismaAuthor extends Author {
+  translations: PrismaAuthorTranslation[];
+  quotes: Quote[];
+}
+
+export interface PrismaAuthorTranslation extends AuthorTranslation {
+  language: Language;
 }
 
 export interface PrismaQuote extends Quote {
@@ -56,17 +67,8 @@ export interface PrismaTagTranslation extends TagTranslation {
   language: Language;
 }
 
-export interface PrismaAuthor extends Author {
-  translations: PrismaAuthorTranslation[];
-  quotes: Quote[];
-}
-
-export interface PrismaAuthorTranslation extends AuthorTranslation {
-  language: Language;
-}
-
 export interface PrismaLanguage extends Language {
   quotes: Quote[];
-  tags: Tag[];
+  tags: TagTranslation[];
   authors: Author[];
 }

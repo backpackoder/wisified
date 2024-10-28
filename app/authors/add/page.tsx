@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useReducer, useState } from "react";
 
 // Components
@@ -15,8 +15,10 @@ import { initialState } from "./utils/initialState";
 import { API, ManyData, PrismaLanguage, PrismaUser } from "@/types/prisma";
 import { wikiSummary } from "@/types/wikiResponse";
 import { Action, CreateAuthorClientSide, State } from "./types";
+import { ROUTES } from "@/commons/commons";
 
 export default function AddAuthor() {
+  const router = useRouter();
   const queryParams = useSearchParams().get("author");
 
   const [user, setUser] = useState<API<PrismaUser>>(null);
@@ -65,16 +67,17 @@ export default function AddAuthor() {
       creatorId: user.id,
       englishName: state.wikiData.title,
       wikipediaLink: state.wikiData.content_urls.desktop.page,
-      translations: state.names.map((name, index) => {
-        return {
-          language: name.code,
-          isOriginal: state.originalLanguage === name.code,
-          name:
-            state.wikiData && name.code === "en" ? state.wikiData.title : state.names[index].name,
-          description: state.descriptions[index].description,
-          bio: state.bio[index].bio,
-        };
-      }),
+      translations: [],
+      // translations: state.names.map((name, index) => {
+      //   return {
+      //     language: name.code,
+      //     isOriginal: state.originalLanguage === name.code,
+      //     name:
+      //       state.wikiData && name.code === "en" ? state.wikiData.title : state.names[index].name,
+      //     description: state.descriptions[index].description,
+      //     bio: state.bio[index].bio,
+      //   };
+      // }),
     };
 
     await fetch(`api/add/`, {
@@ -84,8 +87,12 @@ export default function AddAuthor() {
       },
       body: JSON.stringify(body),
     })
-      .catch((error) => console.error("Error: ", error))
-      .finally(() => dispatch({ type: "SET_STATUS", payload: "submitted" }));
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        router.push(ROUTES.AUTHOR(data.englishName));
+      })
+      .catch((error) => console.error("Error: ", error));
   }
 
   const nameIndexFinder = state.names?.findIndex((name) => name.code === state.language);

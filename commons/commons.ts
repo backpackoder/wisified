@@ -81,7 +81,6 @@ export const FILTERS: FILTERSType = {
   CREATED_AT: "createdAt",
   UPDATED_AT: "updatedAt",
   QUOTES_COUNT: "quotes",
-  TRANSLATIONS: "translations",
 };
 
 // Images

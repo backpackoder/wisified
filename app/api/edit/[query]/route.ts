@@ -4,11 +4,11 @@ import { PRISMA_CALLS } from "@/utils/prismaCalls";
 import { UpdateAuthorClientSide } from "@/app/authors/add/types";
 
 export async function GET(req: Request, params: { params: { query: string } }) {
-  const id = params.params.query;
+  const authorName = params.params.query;
 
   const author = await prisma.author.findUnique({
     where: {
-      id,
+      englishName: authorName,
     },
 
     include: PRISMA_CALLS.authors.include,
@@ -20,7 +20,7 @@ export async function GET(req: Request, params: { params: { query: string } }) {
 export async function POST(req: Request, params: { params: { query: string } }) {
   const data: UpdateAuthorClientSide = await req.json();
 
-  const id = params.params.query;
+  const authorName = params.params.query;
 
   const languages = data.translations.map((translation) => {
     return {
@@ -34,16 +34,12 @@ export async function POST(req: Request, params: { params: { query: string } }) 
         bio: translation.bio,
         isOriginal: translation.isOriginal,
       },
-
-      create: {
-        name: "a",
-      },
     };
   });
 
   const author = await prisma.author.update({
     where: {
-      id,
+      englishName: authorName,
     },
 
     data: {

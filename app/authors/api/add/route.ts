@@ -5,6 +5,8 @@ import { CreateAuthorClientSide } from "../../add/types";
 export async function POST(req: Request) {
   const data: CreateAuthorClientSide = await req.json();
 
+  console.log("HELLO AUTHOR", data);
+
   const languages = data.translations.map((translation) => {
     return {
       language: {

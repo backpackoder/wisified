@@ -16,15 +16,17 @@ const { HOME, QUOTES, AUTHORS, ABOUT } = ROUTES;
 
 // Types
 import { NavbarItemsProps } from "@/types/props";
+import { Items } from "@/types/navbar";
+import NavBarMainLanguages from "./languages";
 
 export function NavbarMain() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const routes = [
+  const routes: Items[] = [
     { icon: <FaHome />, label: "Home", path: HOME },
     { icon: <FaFeather />, label: "Quotes", path: QUOTES },
     { icon: <FaUserEdit />, label: "Authors", path: AUTHORS },
-    { icon: <FaQuestion />, label: "About", path: ABOUT },
+    // { icon: <FaQuestion />, label: "About", path: ABOUT },
   ];
 
   return (
@@ -64,6 +66,11 @@ function NavBarItem({ items, setIsOpen }: NavbarItemsProps) {
           </li>
         );
       })}
+
+      <li className="relative flex items-center gap-2">
+        <NavBarMainLanguages />
+      </li>
+
       <li className="w-full">
         <SignInButton setIsOpen={setIsOpen} />
       </li>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useReducer, useState } from "react";
 
 // Components
 import { NoResultsFound } from "@/components/NoResultsFound";
@@ -12,28 +13,27 @@ import { QuoteItem } from "@/components/quotes/QuoteItem";
 import { FILTERS } from "@/commons/commons";
 
 // Types
-import { Params } from "@/types/params";
+import { NavQuotesParams } from "@/types/params";
 import { PrismaQuote, API, ManyData } from "@/types/prisma";
 import { DispatchQuotesAndAuthors } from "@/types/authors";
 
-export default function Quotesaze() {
+export default function Quotes() {
+  const queryParamsTag = useSearchParams().get("tag");
+
   const [quotes, setQuotes] = useState<API<ManyData<PrismaQuote>>>(null);
 
-  const params: Params = useMemo(() => {
-    return {
-      page: 1,
-      limit: 20,
-      sortBy: FILTERS.DEFAULT,
-      order: "asc",
-      language: "en",
-      author: FILTERS.DEFAULT,
-      tag: FILTERS.DEFAULT,
-    };
-  }, []);
+  const initialState: NavQuotesParams = {
+    page: 1,
+    limit: 20,
+    sortBy: FILTERS.CREATED_AT,
+    order: "asc",
+    language: "en",
+    tag: queryParamsTag ?? FILTERS.DEFAULT,
+  };
 
-  const [state, dispatch] = useReducer(reducer, params);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  function reducer(state: Params, action: DispatchQuotesAndAuthors) {
+  function reducer(state: NavQuotesParams, action: DispatchQuotesAndAuthors) {
     return {
       ...state,
       [action.type]: action.payload,
@@ -42,7 +42,7 @@ export default function Quotesaze() {
 
   useEffect(() => {
     async function fetchQuotes() {
-      const res = await fetch(`/api/quotes/queries/${Object.values(params).join("/")}`, {
+      const res = await fetch(`/api/quotes/queries/${Object.values(state).join("/")}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,17 +53,17 @@ export default function Quotesaze() {
     }
 
     fetchQuotes();
-  }, [params]);
+  }, [state]);
 
   return (
     quotes && (
       <section className="flex flex-col gap-2">
-        <Navbar type="quotes" totalCount={quotes.count} dispatch={dispatch} />
+        <Navbar type="quotes" data={quotes} dispatch={dispatch} queryParamsTag={queryParamsTag} />
+
+        {quotes.totalPages > 1 && <Pagination data={quotes} state={state} dispatch={dispatch} />}
 
         {quotes.data.length > 0 ? (
           <>
-            <Pagination data={quotes.data} state={state} dispatch={dispatch} />
-
             <article className="flex flex-col gap-2">
               {quotes.data.map((quote, index) => {
                 return (
@@ -73,12 +73,12 @@ export default function Quotesaze() {
                 );
               })}
             </article>
-
-            <Pagination data={quotes.data} state={state} dispatch={dispatch} />
           </>
         ) : (
           <NoResultsFound type="quotes" />
         )}
+
+        {quotes.totalPages > 1 && <Pagination data={quotes} state={state} dispatch={dispatch} />}
       </section>
     )
   );

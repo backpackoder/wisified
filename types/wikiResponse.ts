@@ -45,3 +45,12 @@ export type wikiSummary = {
     lon: number;
   };
 };
+
+export type wikiSearch = {
+  results: {
+    ns: number;
+    pageid: number;
+    title: string;
+  }[];
+  suggestion: string;
+};

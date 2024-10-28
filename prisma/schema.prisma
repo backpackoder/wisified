@@ -59,7 +59,7 @@ model User {
   nationality   String?
   role          Role      @default(USER)
   emailUpdates  Boolean   @default(false)
-  language      String    @default("")
+  language      String    @default("en")
 
   accounts      Account[]
   sessions      Session[]
@@ -116,6 +116,41 @@ model FavoriteAuthor {
   @@unique([userId, authorId])
 }
 
+model Author {
+  id              String              @id @default(cuid())
+  createdAt       DateTime            @default(now())
+  createdBy       User                @relation("createdAuthors", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+  updatedAt       DateTime            @updatedAt
+  updatedBy       User[]              @relation("updatedAuthors")
+
+  englishName     String              @unique
+  translations    AuthorTranslation[]
+  picture         String?
+
+  quotes          Quote[]
+  favoriteAuthors FavoriteAuthor[]
+  favoritedBy     User[]
+  favoritedById   String[]
+}
+
+model AuthorTranslation {
+  id              String   @id @default(cuid())
+  
+  name            String
+  description     String?
+  bio             String?
+  isOriginal      Boolean  @default(false)
+  wikipediaLink   String?
+
+  author          Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId        String
+  language        Language @relation(fields: [languageId], references: [id])
+  languageId      String
+
+  @@unique([authorId, languageId])
+}
+
 model Quote {
   id              String            @id @default(cuid())
   createdAt       DateTime          @default(now())
@@ -148,7 +183,6 @@ model QuoteTranslation {
   language        Language @relation(fields: [languageId], references: [id])
   languageId      String
 
-  @@unique([quoteId, isOriginal])
   @@unique([quoteId, languageId])
 }
 
@@ -217,40 +251,6 @@ model CommentReply {
   userId          String
   comment         Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId       String
-}
-
-model Author {
-  id              String              @id @default(cuid())
-  createdAt       DateTime            @default(now())
-  createdBy       User                @relation("createdAuthors", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
-  updatedAt       DateTime            @updatedAt
-  updatedBy       User[]              @relation("updatedAuthors")
-
-  englishName     String              @unique
-  translations    AuthorTranslation[]
-  wikipediaLink   String?
-
-  quotes          Quote[]
-  favoriteAuthors FavoriteAuthor[]
-  favoritedBy     User[]
-  favoritedById   String[]
-}
-
-model AuthorTranslation {
-  id              String   @id @default(cuid())
-  
-  name            String
-  description     String?
-  bio             String?
-  isOriginal      Boolean  @default(false)
-
-  author          Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId        String
-  language        Language @relation(fields: [languageId], references: [id])
-  languageId      String
-
-  @@unique([authorId, languageId])
 }
 
 model Language {

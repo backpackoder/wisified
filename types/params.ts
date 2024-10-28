@@ -1,4 +1,4 @@
-export type Params = {
+export type NavAuthorsParams = {
   language: string;
   maxLength?: number;
   minLength?: number;
@@ -14,4 +14,22 @@ export type Params = {
   query?: string | null;
 };
 
-export type ParamsKeys = keyof Params;
+export type NavAuthorsParamsKeys = keyof NavAuthorsParams;
+
+export type NavQuotesParams = {
+  language: string;
+  maxLength?: number;
+  minLength?: number;
+  tag?: string;
+  author?: string;
+
+  limit?: number;
+
+  sortBy?: string;
+  order?: "asc" | "desc";
+  page?: number;
+
+  query?: string | null;
+};
+
+export type NavQuotesParamsKeys = keyof NavQuotesParams;

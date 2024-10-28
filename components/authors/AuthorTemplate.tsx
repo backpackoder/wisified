@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 // Components
 import { AuthorImg } from "../quotes/AuthorImg";
@@ -7,13 +8,13 @@ import { QuoteItem } from "../quotes/QuoteItem";
 
 // Utils
 import { authOptions } from "@/utils/authOptions";
+import { getWikiData } from "@/utils/getWikiData";
 import { languageIndexFinder } from "@/utils/languageIndexFinder";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
 
 // Types
-import { prisma } from "@/lib/prisma";
 import { WikiAuthorDatas } from "@/app/authors/[slug]/page";
 import { User } from "@prisma/client";
 import { API, PrismaAuthor } from "@/types/prisma";
@@ -25,6 +26,7 @@ type AuthorTemplateProps = {
 
 export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplateProps) {
   const session = await getServerSession(authOptions);
+  const dataFromWiki = await getWikiData(slugWithSpaces);
 
   const currentUserId = await prisma.user
     .findUnique({ where: { email: session?.user?.email ?? "" } })
@@ -40,13 +42,23 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
     where: {
       englishName: slugWithSpaces,
     },
+
     include: {
-      quotes: true,
+      createdBy: true,
+      quotes: {
+        include: {
+          createdBy: true,
+          author: true,
+          translations: true,
+          tags: true,
+        },
+      },
       translations: {
         select: {
           name: true,
           description: true,
           bio: true,
+          wikipediaLink: true,
 
           language: {
             select: {
@@ -72,20 +84,22 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
   const description =
     findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].description;
   const bio = findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].bio;
+  const wikipediaLink =
+    findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].wikipediaLink;
 
   return (
     author && (
       <>
         <h2 className="text-5xl">{name}</h2>
 
-        <AuthorImg author={slugWithSpaces} />
+        <AuthorImg authorName={slugWithSpaces} />
 
-        <h3 className="text-lg">{description}</h3>
+        <h3 className="text-lg">{dataFromWiki?.description}</h3>
 
         <p>
-          {bio}{" "}
+          {dataFromWiki?.extract}{" "}
           <a
-            href={author.wikipediaLink ?? wikiData?.wikipediaLink?.desktop}
+            href={wikipediaLink ?? wikiData?.wikipediaLink?.desktop}
             target="_blank"
             className="text-blue-500 hover:text-blue-800"
           >
@@ -93,15 +107,15 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
           </a>
         </p>
 
-        <Link
+        {/* <Link
           href={{
             pathname: ROUTES.AUTHOR_EDIT(slugWithSpaces),
-            query: `author=${author?.englishName}&id=${author?.id}`,
+            // query: `author=${author?.englishName}&id=${author?.id}`,
           }}
           className="bg-blue-500 text-white p-2 rounded-lg duration-300 hover:bg-blue-700"
         >
           Edit
-        </Link>
+        </Link> */}
 
         {
           <>
@@ -123,7 +137,7 @@ type QuotesOfTheAuthorProps = {
 async function QuotesOfTheAuthor({ author, authorName, user }: QuotesOfTheAuthorProps) {
   return (
     author && (
-      <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-col items-start gap-4 w-full">
         <h3 className=" text-xl">
           {author.quotes.length > 0
             ? `${author.quotes.length} ${
@@ -131,6 +145,16 @@ async function QuotesOfTheAuthor({ author, authorName, user }: QuotesOfTheAuthor
               } from ${authorName}:`
             : `No quotes found from ${authorName}`}
         </h3>
+
+        <Link
+          href={{
+            pathname: ROUTES.QUOTE_ADD,
+            query: { author: authorName },
+          }}
+          className="bg-blue-500 text-white p-2 rounded-lg duration-300 hover:bg-blue-700"
+        >
+          Add a quote
+        </Link>
 
         {author.quotes.map((quote, index) => {
           return (
