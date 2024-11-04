@@ -1,14 +1,14 @@
 import { Dispatch } from "react";
 
 // Types
-import { API, PrismaLanguage } from "@/types/prisma";
+import { API, FullLanguage } from "@/types/prisma";
 import { wikiSummary } from "@/types/wikiResponse";
 
 // Utils
 import { initialState } from "../utils/initialState";
 
 export type EditorProps = {
-  translations: PrismaLanguage[];
+  translations: FullLanguage[];
   state: State;
   dispatch: Dispatch<Action>;
 };

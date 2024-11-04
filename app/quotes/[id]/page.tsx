@@ -14,9 +14,8 @@ export default async function Quote({ params }: { params: { id: string } }) {
       id,
     },
 
-    include: PRISMA_CALLS.quotes.include,
+    include: PRISMA_CALLS.quote.include,
   });
-  console.log("SKBDI", quote);
 
   return (
     quote && (

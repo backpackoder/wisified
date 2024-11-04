@@ -13,7 +13,7 @@ import { ROUTES } from "@/commons/commons";
 
 // Types
 import { Author, TagTranslation } from "@prisma/client";
-import { API, ManyData, PrismaLanguage, PrismaUser } from "@/types/prisma";
+import { API, FullLanguage, FullUser, ManyDataNavbarPages } from "@/types/prisma";
 import { CreateQuoteClientSide } from "./types";
 import { PickAuthor } from "./components/PickAuthor";
 import { SubmitBtn } from "@/components/SubmitBtn";
@@ -41,8 +41,8 @@ export type ContentTranslation = {
 
 export default function AddQuote() {
   const router = useRouter();
-  const [user, setUser] = useState<API<PrismaUser>>(null);
-  const [translations, setTranslations] = useState<API<ManyData<PrismaLanguage>>>(null);
+  const [user, setUser] = useState<API<FullUser>>(null);
+  const [translations, setTranslations] = useState<API<ManyDataNavbarPages<FullLanguage>>>(null);
 
   const [state, dispatch] = useReducer<React.Reducer<State, Action>>(reducer, initialState);
 

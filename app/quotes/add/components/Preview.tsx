@@ -5,14 +5,14 @@ import { PreviewWrapper } from "@/components/add/PreviewWrapper";
 import { QuoteContainer } from "@/components/quotes/quote/QuoteContainer";
 import { AuthorImg } from "@/components/quotes/quote/items/AuthorImg";
 import { State } from "../page";
-import { PrismaLanguage } from "@/types/prisma";
+import { FullLanguage } from "@/types/prisma";
 import { Author } from "@prisma/client";
 
 export type PreviewProps = {
   author: Author;
   username: string;
   state: State;
-  translations: PrismaLanguage[];
+  translations: FullLanguage[];
 };
 
 export function Preview({ author, username, state, translations }: PreviewProps) {

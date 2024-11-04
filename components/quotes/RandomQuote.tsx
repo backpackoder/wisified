@@ -3,29 +3,14 @@ import { prisma } from "@/lib/prisma";
 // Components
 import { QuoteItem } from "./quote";
 import { getMyUserData } from "@/utils/getPrismaDataFromServerSIde";
-
-export async function getPrismaCalls() {
-  const count = await prisma.quote.count();
-
-  const randomIndex = Math.floor(Math.random() * count);
-
-  const randomQuote = prisma.quote.findFirst({
-    skip: randomIndex,
-  });
-
-  return await randomQuote;
-}
-// id: string;
-// createdAt: Date;
-// updatedAt: Date;
-// code: string;
-// englishName: string;
-// nativeName: string;
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function RandomQuote() {
   const user = await getMyUserData();
+  const count = await prisma.quote.count();
+  const randomIndex = Math.floor(Math.random() * count);
 
-  const quotes = await prisma.quote.findMany({
+  const randomQuote = await prisma.quote.findFirst({
     where: {
       translations: {
         some: {
@@ -36,37 +21,13 @@ export async function RandomQuote() {
       },
     },
 
-    include: {
-      createdBy: true,
-      updatedBy: true,
-      author: true,
-      translations: {
-        include: {
-          language: true,
-        },
-      },
-      tags: {
-        include: {
-          translations: {
-            include: {
-              language: true,
-            },
-          },
-        },
-      },
-      favorites: true,
-      favoritedBy: true,
-      comments: true,
-    },
-  });
+    include: PRISMA_CALLS.quote.include,
 
-  console.log("quotes COUNT", quotes.length);
-  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  console.log("randomQuote", randomQuote);
+    skip: randomIndex,
+  });
 
   return randomQuote ? (
     <article className="flex items-center justify-center w-full p-4">
-      {/* Le problème ci-dessous doit être réparé même si ça marche, car problème avec le TypeScript */}
       <QuoteItem quote={randomQuote} />
     </article>
   ) : null;

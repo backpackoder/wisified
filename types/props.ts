@@ -2,7 +2,7 @@
 import { Items } from "./navbar";
 import { DispatchQuotesAndAuthors } from "./authors";
 import { User } from "@prisma/client";
-import { ManyData, PrismaAuthor, PrismaQuote } from "./prisma";
+import { FullAuthor, FullQuote, ManyDataNavbarPages } from "./prisma";
 import { StaticImageData } from "next/image";
 import { Dispatch } from "react";
 import { Action, State } from "@/app/dashboard/settings/types";
@@ -45,7 +45,7 @@ export type DiscoverQuotesAndAuthorsItemProps = DiscoverQuotesAndAuthorsProps & 
 // NAVBAR
 export type NavbarProps = {
   type: string;
-  data: ManyData<PrismaQuote | PrismaAuthor>;
+  data: ManyDataNavbarPages<FullAuthor | FullQuote>;
   dispatch: React.Dispatch<DispatchQuotesAndAuthors>;
   queryParamsTag?: string | null;
 };
@@ -57,7 +57,7 @@ export type NavbarItemsProps = {
 
 // NAVIGATION
 export type PaginationProps = {
-  data: ManyData<PrismaQuote | PrismaAuthor>;
+  data: ManyDataNavbarPages<FullAuthor | FullQuote>;
   state: any;
   dispatch: React.Dispatch<any>;
 };
@@ -84,9 +84,8 @@ export type AuthorImgProps = {
   };
 };
 
-// QUOTES
 export type QuoteItemProps = {
-  quote: PrismaQuote;
+  quote: FullQuote;
 };
 
 // USER PROFILE

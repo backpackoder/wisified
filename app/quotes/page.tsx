@@ -14,13 +14,13 @@ import { FILTERS } from "@/commons/commons";
 
 // Types
 import { NavQuotesParams } from "@/types/params";
-import { PrismaQuote, API, ManyData } from "@/types/prisma";
+import { API, FullQuote, ManyDataNavbarPages } from "@/types/prisma";
 import { DispatchQuotesAndAuthors } from "@/types/authors";
 
 export default function Quotes() {
   const queryParamsTag = useSearchParams().get("tag");
 
-  const [quotes, setQuotes] = useState<API<ManyData<PrismaQuote>>>(null);
+  const [quotes, setQuotes] = useState<API<ManyDataNavbarPages<FullQuote>>>(null);
 
   const initialState: NavQuotesParams = {
     page: 1,

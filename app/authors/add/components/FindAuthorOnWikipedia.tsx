@@ -69,7 +69,6 @@ export function FindAuthorOnWikipedia({ state, dispatch }: FindAuthorOnWikipedia
             if (wikiData && wikiData.originalimage?.source) {
               const dbAuthorsNames = dbAuthors.map((author) => author.englishName.toLowerCase());
               const existsInDB = dbAuthorsNames.includes(result.title.toLowerCase());
-              console.log("dbAuthorsNames", dbAuthorsNames);
 
               return {
                 wikiData,

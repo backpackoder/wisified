@@ -11,13 +11,13 @@ export async function getMyUserData() {
 }
 
 export function getFollowersAndFollowing({ id }: { id: string }) {
-  const followers = prisma.follows.count({
+  const followers = prisma.follow.count({
     where: {
       followingId: id,
     },
   });
 
-  const following = prisma.follows.count({
+  const following = prisma.follow.count({
     where: {
       followerId: id,
     },

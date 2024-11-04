@@ -12,7 +12,7 @@ import { getWikiData } from "@/utils/getWikiData";
 import { initialState } from "./utils/initialState";
 
 // Types
-import { API, ManyData, PrismaLanguage, PrismaUser } from "@/types/prisma";
+import { API, ManyDataNavbarPages, FullLanguage } from "@/types/prisma";
 import { wikiSummary } from "@/types/wikiResponse";
 import { Action, CreateAuthorClientSide, State } from "./types";
 
@@ -23,8 +23,8 @@ export default function AddAuthor() {
   const router = useRouter();
   const queryParams = useSearchParams().get("author");
 
-  const [user, setUser] = useState<API<PrismaUser>>(null);
-  const [translations, setTranslations] = useState<API<ManyData<PrismaLanguage>>>(null);
+  const [user, setUser] = useState<API<FullLanguage>>(null);
+  const [translations, setTranslations] = useState<API<ManyDataNavbarPages<FullLanguage>>>(null);
 
   const [state, dispatch] = useReducer<React.Reducer<State, Action>>(reducer, initialState);
 

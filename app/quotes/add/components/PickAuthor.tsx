@@ -4,7 +4,7 @@ import { Dispatch, useEffect, useState } from "react";
 
 // Types
 import { Action } from "../page";
-import { API, ManyData, PrismaAuthor } from "@/types/prisma";
+import { API, FullAuthor, ManyDataNavbarPages } from "@/types/prisma";
 import { AuthorImg } from "@/components/quotes/quote/items/AuthorImg";
 import { languageIndexFinder } from "@/utils/languageIndexFinder";
 import { getWikiData } from "@/utils/getWikiData";
@@ -12,13 +12,13 @@ import Image from "next/image";
 import { IMAGES, ROUTES } from "@/commons/commons";
 
 type AuthorProps = {
-  author: PrismaAuthor | null;
+  author: FullAuthor | null;
   dispatch: Dispatch<Action>;
 };
 
 export function PickAuthor({ author, dispatch }: AuthorProps) {
   const params = useSearchParams().get("author");
-  const [authors, setAuthors] = useState<API<ManyData<PrismaAuthor>>>(null);
+  const [authors, setAuthors] = useState<API<ManyDataNavbarPages<FullAuthor>>>(null);
   const [search, setSearch] = useState(params ?? "");
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export function PickAuthor({ author, dispatch }: AuthorProps) {
 }
 
 type AuthorCardProps = {
-  author: PrismaAuthor;
+  author: FullAuthor;
   language: string;
   dispatch: Dispatch<Action>;
 };

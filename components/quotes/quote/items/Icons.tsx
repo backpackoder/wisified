@@ -11,13 +11,13 @@ import { HelpInHover } from "../../../HelpInHover";
 import { FLAGS, ROUTES } from "@/commons/commons";
 
 // Types
-import { PrismaQuote } from "@/types/prisma";
 import Image from "next/image";
 import { Iso } from "@/utils/languages";
 import { AppContext } from "@/app/context/AppContext";
+import { FullQuote } from "@/types/prisma";
 
 export type QuoteIconsProps = {
-  quote: PrismaQuote;
+  quote: FullQuote;
   language: Iso;
   setLanguageQuote: Dispatch<SetStateAction<Iso>>;
 };

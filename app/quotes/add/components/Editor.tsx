@@ -10,10 +10,10 @@ import { AddBtn } from "@/components/buttons/AddBtn";
 
 // Types
 import { Action, State } from "../page";
-import { PrismaLanguage } from "@/types/prisma";
+import { FullLanguage } from "@/types/prisma";
 
 export type EditorProps = {
-  translations: PrismaLanguage[];
+  translations: FullLanguage[];
   state: State;
   dispatch: Dispatch<Action>;
 };
@@ -69,10 +69,10 @@ export function Editor({ translations, state, dispatch }: EditorProps) {
 }
 
 type LanguageProps = {
-  translations: PrismaLanguage[];
+  translations: FullLanguage[];
   state: State;
   dispatch: Dispatch<Action>;
-  selectedLanguage: PrismaLanguage;
+  selectedLanguage: FullLanguage;
 };
 
 function Language({ translations, state, dispatch }: LanguageProps) {
@@ -126,7 +126,7 @@ function Language({ translations, state, dispatch }: LanguageProps) {
 type ContentProps = {
   state: State;
   contentIndexFinder: number;
-  selectedLanguage: PrismaLanguage;
+  selectedLanguage: FullLanguage;
   handleContent: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
@@ -154,10 +154,10 @@ function Content({ state, contentIndexFinder, selectedLanguage, handleContent }:
 }
 
 export type TagsProps = {
-  translations: PrismaLanguage[];
+  translations: FullLanguage[];
   state: State;
   dispatch: Dispatch<Action>;
-  selectedLanguage: PrismaLanguage;
+  selectedLanguage: FullLanguage;
 };
 
 function Tags({ translations, state, dispatch, selectedLanguage }: TagsProps) {
@@ -194,7 +194,7 @@ function Tags({ translations, state, dispatch, selectedLanguage }: TagsProps) {
 type AvailableTagsProps = {
   state: State;
   dispatch: Dispatch<Action>;
-  selectedLanguage: PrismaLanguage;
+  selectedLanguage: FullLanguage;
 };
 
 function AvailableTags({ state, dispatch, selectedLanguage }: AvailableTagsProps) {
@@ -224,7 +224,7 @@ function AvailableTags({ state, dispatch, selectedLanguage }: AvailableTagsProps
 type SelectedTagsProps = {
   state: State;
   dispatch: Dispatch<Action>;
-  selectedLanguage: PrismaLanguage;
+  selectedLanguage: FullLanguage;
 };
 
 function SelectedTags({ state, dispatch, selectedLanguage }: SelectedTagsProps) {

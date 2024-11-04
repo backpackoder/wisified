@@ -1,6 +1,5 @@
 // Types
 import { AuthorKeyOf, Filter } from "@/types/getFilters";
-import { LANGUAGES, Language } from "@/types/languages";
 
 export function getFilters() {
   const limit: Filter<number> = {

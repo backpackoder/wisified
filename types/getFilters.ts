@@ -1,18 +1,18 @@
 import {
-  PrismaAuthor,
-  PrismaAuthorTranslation,
-  PrismaQuote,
-  PrismaQuoteTranslation,
-  PrismaTag,
-  PrismaTagTranslation,
+  FullAuthor,
+  FullAuthorTranslation,
+  FullQuote,
+  FullQuoteTranslation,
+  FullTag,
+  FullTagTranslation,
 } from "./prisma";
 
-export type AuthorKeyOf = keyof PrismaAuthor;
-export type AuthorTranslationKeyOf = keyof PrismaAuthorTranslation;
-export type QuoteKeyOf = keyof PrismaQuote;
-export type QuoteTranslationKeyOf = keyof PrismaQuoteTranslation;
-export type TagKeyOf = keyof PrismaTag;
-export type TagTranslationKeyOf = keyof PrismaTagTranslation;
+export type AuthorKeyOf = keyof FullAuthor;
+export type AuthorTranslationKeyOf = keyof FullAuthorTranslation;
+export type QuoteKeyOf = keyof FullQuote;
+export type QuoteTranslationKeyOf = keyof FullQuoteTranslation;
+export type TagKeyOf = keyof FullTag;
+export type TagTranslationKeyOf = keyof FullTagTranslation;
 
 export type Filter<T> = {
   title: string;

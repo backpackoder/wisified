@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+// Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 import { UpdateAuthorClientSide } from "@/app/authors/add/types";
 
@@ -11,7 +13,7 @@ export async function GET(req: Request, params: { params: { query: string } }) {
       englishName: authorName,
     },
 
-    include: PRISMA_CALLS.authors.include,
+    include: PRISMA_CALLS.author.include,
   });
 
   return NextResponse.json(author);

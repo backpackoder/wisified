@@ -1,11 +1,11 @@
 // Types
 import { Filter, QuoteKeyOf, QuoteTranslationKeyOf } from "@/types/getFilters";
 import { LANGUAGES } from "@/types/languages";
-import { PrismaTag } from "@/types/prisma";
+import { FullTag } from "@/types/prisma";
 import { Language } from "@prisma/client";
 
 type GetFiltersProps = {
-  tags: PrismaTag[];
+  tags: FullTag[];
   queryParamsTag?: string | null;
 };
 

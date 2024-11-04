@@ -32,11 +32,11 @@ export async function GET(req: Request, { params }: { params: { queries: string[
 
   try {
     const totalCount = await prisma.author.findMany({
-      include: PRISMA_CALLS.authors.include,
+      include: PRISMA_CALLS.author.include,
     });
 
     const authors = await prisma.author.findMany({
-      include: PRISMA_CALLS.authors.include,
+      include: PRISMA_CALLS.author.include,
       orderBy: sortBy === "quotes" ? { quotes: { _count: order } } : { [sortBy]: order },
       skip: (Number(page) - 1) * Number(limit),
       take: Number(limit),

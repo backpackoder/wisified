@@ -18,14 +18,14 @@ export function Preview({ state }: PreviewProps) {
   return wikiData ? (
     <PreviewWrapper>
       <AuthorWrapper>
-        <h2 className="text-5xl">{wikiData?.title}</h2>
+        <h2 className="text-5xl">{wikiData.title}</h2>
 
-        <AuthorImg authorName={wikiData?.title} />
+        <AuthorImg authorName={wikiData.title} />
 
-        <h3 className="text-lg">{state.wikiData?.description}</h3>
+        <h3 className="text-lg">{wikiData.description}</h3>
 
         <p>
-          {state.wikiData?.extract}
+          {wikiData.extract}
           <a
             href={wikiData?.content_urls.desktop.page}
             target="_blank"

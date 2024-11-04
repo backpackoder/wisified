@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+
+// Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function GET(req: Request) {
   const quote = await prisma.quote.findMany({
-    include: PRISMA_CALLS.quotes.include,
+    include: PRISMA_CALLS.quote.include,
   });
 
   const count = quote.length;

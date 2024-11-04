@@ -11,110 +11,18 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-}
-
-model Account {
-  id                 String   @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  refresh_token_expires_in Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model User {
-  id            String    @id @default(cuid())
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  email         String   @unique
-  emailVerified DateTime?
-  username      String    @unique @default(cuid()) @db.VarChar(25)
-  name          String?   @db.VarChar(25)
-  image         String?
-  bio           String?   @db.Text
-  nationality   String?
-  role          Role      @default(USER)
-  emailUpdates  Boolean   @default(false)
-  language      String    @default("en")
-
-  accounts      Account[]
-  sessions      Session[]
-  followedBy    Follows[] @relation("following")
-  following     Follows[] @relation("follower")
-
-  quotes   Quote[]
-  createdQuotes    Quote[]  @relation("createdQuotes")
-  updatedQuotes    Quote[]  @relation("updatedQuotes")
-  favoriteQuotes  FavoriteQuote[]
-
-  authors  Author[]
-  createdAuthors   Author[] @relation("createdAuthors")
-  updatedAuthors   Author[] @relation("updatedAuthors")
-  favoriteAuthors  FavoriteAuthor[]
-
-  comments         Comment[]
-  commentLikes     CommentLike[]
-  commentReplies   CommentReply[]
-  CommentReplyLike CommentReplyLike[]
-}
-
-model Follows {
-  follower       User     @relation("follower", fields: [followerId], references: [id])
-  followerId     String
-  following      User     @relation("following", fields: [followingId], references: [id])
-  followingId    String
-
-  @@id([followerId, followingId])
-}
-
-model FavoriteQuote {
+model Language {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
-  quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  quoteId         String
-
-  @@unique([userId, quoteId])
-}
-
-model FavoriteAuthor {
-  id              String   @id @default(cuid())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId          String
-  author          Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId        String
-
-  @@unique([userId, authorId])
+  code            String   @unique
+  englishName     String   @unique
+  nativeName      String
+  
+  quotes          QuoteTranslation[]
+  tags            TagTranslation[]
+  authors         AuthorTranslation[]
 }
 
 model Author {
@@ -266,16 +174,108 @@ model CommentReplyLike {
   @@unique([userId, replyId])
 }
 
-model Language {
+model Account {
+  id                 String   @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  refresh_token_expires_in Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  email         String   @unique
+  emailVerified DateTime?
+  username      String    @unique @default(cuid()) @db.VarChar(25)
+  name          String?   @db.VarChar(25)
+  image         String?
+  bio           String?   @db.Text
+  nationality   String?
+  role          Role      @default(USER)
+  emailUpdates  Boolean   @default(false)
+  language      String    @default("en")
+
+  accounts      Account[]
+  sessions      Session[]
+  followedBy    Follow[] @relation("following")
+  following     Follow[] @relation("follower")
+
+  quotes   Quote[]
+  createdQuotes    Quote[]  @relation("createdQuotes")
+  updatedQuotes    Quote[]  @relation("updatedQuotes")
+  favoriteQuotes  FavoriteQuote[]
+
+  authors  Author[]
+  createdAuthors   Author[] @relation("createdAuthors")
+  updatedAuthors   Author[] @relation("updatedAuthors")
+  favoriteAuthors  FavoriteAuthor[]
+
+  comments         Comment[]
+  commentLikes     CommentLike[]
+  commentReplies   CommentReply[]
+  commentReplyLike CommentReplyLike[]
+}
+
+model Follow {
+  follower       User     @relation("follower", fields: [followerId], references: [id])
+  followerId     String
+  following      User     @relation("following", fields: [followingId], references: [id])
+  followingId    String
+
+  @@id([followerId, followingId])
+}
+
+model FavoriteAuthor {
   id              String   @id @default(cuid())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  code            String   @unique
-  englishName     String   @unique
-  nativeName      String
-  
-  quotes          QuoteTranslation[]
-  tags            TagTranslation[]
-  authors         AuthorTranslation[]
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  author          Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId        String
+
+  @@unique([userId, authorId])
+}
+
+model FavoriteQuote {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  quoteId         String
+
+  @@unique([userId, quoteId])
 }

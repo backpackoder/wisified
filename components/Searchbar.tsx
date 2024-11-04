@@ -9,11 +9,13 @@ import { NoResultsFound } from "./NoResultsFound";
 // Types
 import { SearchbarProps } from "@/types/searchbar";
 import { DispatchQuotesAndAuthors } from "@/types/authors";
-import { API, ManyData, PrismaAuthor, PrismaQuote } from "@/types/prisma";
+import { API, FullAuthor, FullQuote, ManyDataNavbarPages } from "@/types/prisma";
 
 export function Searchbar({ type }: SearchbarProps) {
-  const [searchQuote, setSearchQuote] = useState<API<ManyData<PrismaQuote>> | null>(null);
-  const [searchAuthor, setSearchAuthor] = useState<API<ManyData<PrismaAuthor>> | null>(null);
+  const [searchQuote, setSearchQuote] = useState<API<ManyDataNavbarPages<FullQuote>> | null>(null);
+  const [searchAuthor, setSearchAuthor] = useState<API<ManyDataNavbarPages<FullAuthor>> | null>(
+    null
+  );
 
   type InitialStateProps = {
     query: string;
@@ -93,7 +95,7 @@ function SearchAuthor({
   searchAuthor,
 }: {
   type: string;
-  searchAuthor: ManyData<PrismaAuthor>;
+  searchAuthor: ManyDataNavbarPages<FullAuthor>;
 }) {
   return searchAuthor.data.length > 0 ? (
     <>
@@ -115,7 +117,13 @@ function SearchAuthor({
   );
 }
 
-function SearchQuote({ type, searchQuote }: { type: string; searchQuote: ManyData<PrismaQuote> }) {
+function SearchQuote({
+  type,
+  searchQuote,
+}: {
+  type: string;
+  searchQuote: ManyDataNavbarPages<FullQuote>;
+}) {
   return searchQuote.data.length > 0 ? (
     <>
       {searchQuote.data.map((quote, index) => {

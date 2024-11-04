@@ -17,7 +17,8 @@ import { ROUTES } from "@/commons/commons";
 // Types
 import { WikiAuthorDatas } from "@/app/authors/[slug]/page";
 import { User } from "@prisma/client";
-import { API, PrismaAuthor } from "@/types/prisma";
+import { API, FullAuthorAndQuote } from "@/types/prisma";
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 type AuthorTemplateProps = {
   slugWithSpaces: string;
@@ -43,35 +44,7 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
       englishName: slugWithSpaces,
     },
 
-    include: {
-      createdBy: true,
-      quotes: {
-        include: {
-          createdBy: true,
-          author: true,
-          translations: {
-            include: {
-              language: true,
-            },
-          },
-          tags: true,
-        },
-      },
-      translations: {
-        select: {
-          name: true,
-          description: true,
-          bio: true,
-          wikipediaLink: true,
-
-          language: {
-            select: {
-              code: true,
-            },
-          },
-        },
-      },
-    },
+    include: PRISMA_CALLS.authorAndQuotes.include,
   });
 
   const findIndexLanguage =
@@ -111,7 +84,7 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
           </a>
         </p>
 
-        {/* <Link
+        <Link
           href={{
             pathname: ROUTES.AUTHOR_EDIT(slugWithSpaces),
             // query: `author=${author?.englishName}&id=${author?.id}`,
@@ -119,12 +92,12 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
           className="bg-blue-500 text-white p-2 rounded-lg duration-300 hover:bg-blue-700"
         >
           Edit
-        </Link> */}
+        </Link>
 
         {
           <>
             {/* @ts-expect-error Async Server Component */}
-            <QuotesOfTheAuthor author={author} authorName={name} user={user} />
+            <QuotesOfTheAuthor author={author} authorName={name} />
           </>
         }
       </>
@@ -133,12 +106,11 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
 }
 
 type QuotesOfTheAuthorProps = {
-  author: API<PrismaAuthor>;
+  author: FullAuthorAndQuote;
   authorName: string;
-  user: API<User>;
 };
 
-async function QuotesOfTheAuthor({ author, authorName, user }: QuotesOfTheAuthorProps) {
+async function QuotesOfTheAuthor({ author, authorName }: QuotesOfTheAuthorProps) {
   return (
     author && (
       <div className="flex flex-col items-start gap-4 w-full">
@@ -161,6 +133,7 @@ async function QuotesOfTheAuthor({ author, authorName, user }: QuotesOfTheAuthor
         </Link>
 
         {author.quotes.map((quote, index) => {
+          const y = quote;
           return (
             <>
               <QuoteItem key={index} quote={quote} />

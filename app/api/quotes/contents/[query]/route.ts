@@ -18,7 +18,7 @@ export async function GET(req: Request, params: { params: { query: string } }) {
         },
       },
     },
-    include: PRISMA_CALLS.quotes.include,
+    include: PRISMA_CALLS.quote.include,
   });
 
   const data = {

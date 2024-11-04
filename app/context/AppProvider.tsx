@@ -16,9 +16,6 @@ export function AppProvider({ children }: ProviderProps) {
   const [user, setUser] = useState<API<User>>(null);
   const [language, setLanguage] = useState<API<Iso>>(null);
   const [appLanguages, setAppLanguages] = useState<API<ManyDataCountData<Language>>>(null);
-  console.log("user", user);
-  // console.log("language", language);
-  // console.log("appLanguages", appLanguages);
 
   function changeLanguage(language: Iso) {
     updateUserSettings({ value: language, typeSettings: "language" });

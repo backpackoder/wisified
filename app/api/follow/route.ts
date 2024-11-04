@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     .findUnique({ where: { email: currentUserEmail } })
     .then((user) => user?.id!);
 
-  const record = await prisma.follows.create({
+  const record = await prisma.follow.create({
     data: {
       followerId: currentUserId,
       followingId: targetUserId,
@@ -33,7 +33,7 @@ export async function DELETE(req: NextRequest) {
     .findUnique({ where: { email: currentUserEmail } })
     .then((user) => user?.id!);
 
-  const record = await prisma.follows.delete({
+  const record = await prisma.follow.delete({
     where: {
       followerId_followingId: {
         followerId: currentUserId,

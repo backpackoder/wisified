@@ -26,7 +26,6 @@ export function UserDataEditor({
 }: UserDataEditorProps) {
   const [newValue, setNewValue] = useState(getUserData() ?? "");
   const [isUsernameTaken, setIsUsernameTaken] = useState(false);
-  console.log("newValue", newValue);
 
   function getType() {
     if (type && user) return type;

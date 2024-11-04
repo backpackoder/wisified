@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { Dispatch, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { FaCamera } from "react-icons/fa";
+import { AppContext } from "@/app/context/AppContext";
 
 // Components
 import { UserDataEditor } from "./UserDataEditor";
@@ -9,32 +12,30 @@ import { ModifyButton } from "./ModifyBtn";
 
 // Utils
 import toCapitalize from "@/utils/toCapitalize";
+import { appLanguages, Iso } from "@/utils/languages";
+import { getWikiData } from "@/utils/getWikiData";
 
 // Types
 import { UserItemProps, UserSettingsItemProps } from "@/types/props";
-import { appLanguages, Iso } from "@/utils/languages";
-import { AppContext } from "@/app/context/AppContext";
-import { API, ManyDataCountData, PrismaAuthor } from "@/types/prisma";
-import Image from "next/image";
-import { getWikiData } from "@/utils/getWikiData";
+import { API, FullAuthor, ManyDataCountData } from "@/types/prisma";
 import { Action } from "./types";
-import { useSession } from "next-auth/react";
-import { IMAGES } from "@/commons/commons";
 
-export function ImageProfileItem({ type, value, state, dispatch, Component }: UserItemProps) {
+export function ImageProfileItem({
+  type,
+  state,
+  dispatch,
+  Component,
+}: Omit<UserItemProps, "value">) {
   const session = useSession();
   const { user, updateUserSettings } = useContext(AppContext);
-  const [authors, setAuthors] = useState<API<ManyDataCountData<PrismaAuthor>>>(null);
+  const [authors, setAuthors] = useState<API<ManyDataCountData<FullAuthor>>>(null);
   const [isEditing, setIsEditing] = useState(false);
   const actualProfileImage = session.data?.user?.image ?? user?.image ?? "";
-
-  console.log("authors ImageProfileItem", authors);
-  console.log("session", session);
 
   useEffect(() => {
     async function getAuthors() {
       const res = await fetch("/api/authors");
-      const data: API<ManyDataCountData<PrismaAuthor>> = await res.json().then((data) => data);
+      const data: API<ManyDataCountData<FullAuthor>> = await res.json().then((data) => data);
 
       setAuthors(data);
     }
@@ -112,7 +113,7 @@ export function ImageProfileItem({ type, value, state, dispatch, Component }: Us
   );
 }
 
-function AuthorPicture({ author, dispatch }: { author: PrismaAuthor; dispatch: Dispatch<Action> }) {
+function AuthorPicture({ author, dispatch }: { author: FullAuthor; dispatch: Dispatch<Action> }) {
   const [authorPicture, setAuthorPicture] = useState<string | null>(null);
 
   useEffect(() => {

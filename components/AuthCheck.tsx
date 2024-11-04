@@ -7,9 +7,12 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/commons/commons";
 
 export function AuthCheck({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const {
+    // data: session,
+    status,
+  } = useSession();
 
-  console.log("In AuthCheck", session, status);
+  // console.log("In AuthCheck", session, status);
 
   if (status === "loading") {
     return <>Loading...</>;

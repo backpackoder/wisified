@@ -7,12 +7,12 @@ import { Searchbar } from "../Searchbar";
 
 // Types
 import { NavbarProps } from "@/types/props";
-import { API, ManyData, PrismaTag } from "@/types/prisma";
+import { API, FullTag, ManyDataNavbarPages } from "@/types/prisma";
 import { getFilters as getFiltersAuthors } from "@/app/authors/utils/getFilters";
 import { getFilters as getFiltersQuotes } from "@/app/quotes/utils/getFilters";
 
 export function Navbar({ type, data, dispatch, queryParamsTag }: NavbarProps) {
-  const [tags, setTags] = useState<API<ManyData<PrismaTag>>>(null);
+  const [tags, setTags] = useState<API<ManyDataNavbarPages<FullTag>>>(null);
 
   const filtersAuthors = getFiltersAuthors();
   const filtersQuotes = tags && getFiltersQuotes({ tags: tags.data, queryParamsTag });

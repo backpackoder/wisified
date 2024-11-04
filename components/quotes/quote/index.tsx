@@ -23,7 +23,6 @@ import { Iso } from "@/utils/languages";
 export function QuoteItem({ quote }: QuoteItemProps) {
   const { language } = useContext(AppContext);
   const [languageQuote, setLanguageQuote] = useState(language ?? "en");
-  console.log("languageQuote", languageQuote);
 
   const translation = getTranslatedQuote({
     actualLanguage: languageQuote === language ? language : languageQuote,
@@ -51,12 +50,16 @@ export function QuoteItem({ quote }: QuoteItemProps) {
 
       <p>
         Added by{" "}
-        <Link
-          href={ROUTES.USER(quote?.createdById)}
-          className="font-semibold italic duration-200 hover:text-gray-500"
-        >
-          {quote.createdBy.username}
-        </Link>
+        {quote?.createdBy && quote?.createdById ? (
+          <Link
+            href={ROUTES.USER(quote?.createdById)}
+            className="font-semibold italic duration-200 hover:text-gray-500"
+          >
+            {quote.createdBy.username}
+          </Link>
+        ) : (
+          "Deleted account"
+        )}
       </p>
 
       <div className="flex flex-wrap gap-2">

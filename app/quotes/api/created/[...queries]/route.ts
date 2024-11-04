@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 
 // Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
-import { ContentTranslation } from "../../../add/page";
 
 export async function GET(req: Request, params: { params: { query: string[] } }) {
   const query = params.params.query;
@@ -18,7 +17,7 @@ export async function GET(req: Request, params: { params: { query: string[] } })
         },
       },
     },
-    include: PRISMA_CALLS.quotes.include,
+    include: PRISMA_CALLS.quote.include,
   });
 
   return NextResponse.json(quote);

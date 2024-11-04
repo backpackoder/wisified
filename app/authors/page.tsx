@@ -12,11 +12,11 @@ import { FILTERS } from "@/commons/commons";
 
 // Types
 import { NavAuthorsParams } from "@/types/params";
-import { API, ManyData, PrismaAuthor } from "@/types/prisma";
+import { API, FullAuthor, ManyDataNavbarPages } from "@/types/prisma";
 import { DispatchQuotesAndAuthors } from "@/types/authors";
 
 export default function Authors() {
-  const [authors, setAuthors] = useState<API<ManyData<PrismaAuthor>>>(null);
+  const [authors, setAuthors] = useState<API<ManyDataNavbarPages<FullAuthor>>>(null);
 
   const initialState: NavAuthorsParams = {
     page: 1,
@@ -58,7 +58,7 @@ export default function Authors() {
         {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}
         <article className="flex flex-wrap justify-center gap-8">
           {authors.data.map((author, index) => {
-            return <AuthorCard key={index} author={author} language={state.language} />;
+            return <AuthorCard key={index} author={author} />;
           })}
         </article>
         {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}

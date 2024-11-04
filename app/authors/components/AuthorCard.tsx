@@ -3,10 +3,7 @@
 import Link from "next/link";
 
 // Types
-import { PrismaAuthor } from "@/types/prisma";
-
-// Utils
-import { languageIndexFinder } from "@/utils/languageIndexFinder";
+import { FullAuthor } from "@/types/prisma";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
@@ -17,11 +14,10 @@ import { useEffect, useState } from "react";
 import { getWikiData } from "@/utils/getWikiData";
 
 type AuthorCardProps = {
-  author: PrismaAuthor;
-  language: string;
+  author: FullAuthor;
 };
 
-export function AuthorCard({ author, language }: AuthorCardProps) {
+export function AuthorCard({ author }: AuthorCardProps) {
   const englishName = author.englishName;
   const [description, setDescription] = useState<string>("");
 

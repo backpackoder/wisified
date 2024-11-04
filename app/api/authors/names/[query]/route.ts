@@ -16,7 +16,7 @@ export async function GET(req: Request, params: { params: { query: string } }) {
         },
       },
     },
-    include: PRISMA_CALLS.authors.include,
+    include: PRISMA_CALLS.author.include,
   });
 
   const count = authors.length;

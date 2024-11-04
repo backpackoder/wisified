@@ -1,9 +1,9 @@
-import { API, PrismaQuoteTranslation } from "@/types/prisma";
+import { API, FullQuoteTranslation } from "@/types/prisma";
 import { Iso } from "./languages";
 
 type GetTranslatedQuote = {
   actualLanguage: API<Iso>;
-  translations: PrismaQuoteTranslation[];
+  translations: FullQuoteTranslation[];
 };
 
 export function getTranslatedQuote({ translations, actualLanguage }: GetTranslatedQuote) {

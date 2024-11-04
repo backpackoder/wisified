@@ -23,7 +23,6 @@ import { initialState } from "./utils/initialState";
 export default function Settings() {
   const { user } = useAppContext();
   const [state, dispatch] = useReducer(reducer, initialState);
-  console.log("state.image", state.image);
 
   function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -69,7 +68,6 @@ export default function Settings() {
             <div className="max-w-500 duration-150">
               <ImageProfileItem
                 type="image"
-                value={state.image}
                 state={state}
                 dispatch={dispatch}
                 user={user}
