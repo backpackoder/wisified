@@ -5,7 +5,7 @@ import { Dispatch, useEffect, useState } from "react";
 // Types
 import { Action } from "../page";
 import { API, ManyData, PrismaAuthor } from "@/types/prisma";
-import { AuthorImg } from "@/components/quotes/AuthorImg";
+import { AuthorImg } from "@/components/quotes/quote/items/AuthorImg";
 import { languageIndexFinder } from "@/utils/languageIndexFinder";
 import { getWikiData } from "@/utils/getWikiData";
 import Image from "next/image";

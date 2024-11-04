@@ -1,23 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Dispatch, useMemo, useState } from "react";
 
 // Types
 import { User } from "@prisma/client";
+import { API } from "@/types/prisma";
+import { Action, State } from "./types";
 
 type UserDataEditorProps = {
-  type?: keyof User;
-  user?: User;
+  user: API<User>;
+  type: keyof Pick<User, "image" | "username" | "name" | "nationality" | "bio">;
+  value: string;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  handleModifiedData: () => void;
+  state: State;
+  dispatch: Dispatch<Action>;
 };
 
 export function UserDataEditor({
-  type,
   user,
+  type,
+  value,
   setIsEditing,
-  handleModifiedData,
+  state,
+  dispatch,
 }: UserDataEditorProps) {
+  const [newValue, setNewValue] = useState(getUserData() ?? "");
+  const [isUsernameTaken, setIsUsernameTaken] = useState(false);
+  console.log("newValue", newValue);
+
   function getType() {
     if (type && user) return type;
     return "";
@@ -27,25 +37,22 @@ export function UserDataEditor({
     if (type && user) return user?.[type];
     return "";
   }
-  const data = getUserData();
-  const [value, setValue] = useState(data);
-  const [isUsernameTaken, setIsUsernameTaken] = useState(false);
 
   function handleCancel() {
-    setValue("");
+    setNewValue(value);
     setIsEditing(false);
   }
 
   async function updateUser() {
     const body = {
-      [getType()]: value,
+      [getType()]: newValue,
     };
 
-    const users: any = await fetch("/api/users", {
+    const users: User[] = await fetch("/api/users", {
       method: "GET",
     }).then((res) => res.json());
 
-    const usernameCheck = users.some((user: any) => user.username === value);
+    const usernameCheck = type === "username" && users.some((user: any) => user.username === value);
 
     if (usernameCheck) {
       return setIsUsernameTaken(true);
@@ -59,12 +66,15 @@ export function UserDataEditor({
       },
     });
 
-    if (value === "") return setIsEditing(false);
-
-    value !== data && res.json().then(() => handleModifiedData());
+    newValue && newValue !== value && res.json();
 
     setIsUsernameTaken(false);
     setIsEditing(false);
+
+    dispatch({
+      type,
+      payload: newValue,
+    });
   }
 
   const editor = useMemo(() => {
@@ -73,10 +83,9 @@ export function UserDataEditor({
         return (
           <textarea
             name={type}
-            defaultValue={user?.[type] ?? ""}
-            value={value?.toString() ?? ""}
+            defaultValue={state.bio ?? ""}
             className="min-h-[150px] p-2 border-2 rounded-lg"
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => setNewValue(e.target.value)}
           />
         );
 
@@ -85,15 +94,14 @@ export function UserDataEditor({
           <input
             type="text"
             name={type}
-            defaultValue={data?.toLocaleString() ?? ""}
-            value={value?.toLocaleString() ?? ""}
+            defaultValue={state[type]?.toLocaleString() ?? ""}
             max={type === "name" ? 30 : undefined}
             className="p-2 border-2 rounded-lg"
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => setNewValue(e.target.value)}
           />
         );
     }
-  }, [data, type, user, value]);
+  }, [state, type]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 w-full">
@@ -103,7 +111,7 @@ export function UserDataEditor({
         <p className="bg-red-300 py-1 px-2 rounded-lg">This username is already taken!</p>
       )}
 
-      {(!value || (typeof value === "string" && value.length < 3)) && (
+      {(!value || (typeof newValue === "string" && newValue.length < 3)) && (
         <p className="bg-red-300 py-1 px-2 rounded-lg">You must enter at last 3 caracters!</p>
       )}
 
@@ -112,7 +120,7 @@ export function UserDataEditor({
           Cancel
         </button>
 
-        <button className="bg-green-300 p-2 rounded-lg" onClick={() => value && updateUser()}>
+        <button className="bg-green-300 p-2 rounded-lg" onClick={() => newValue && updateUser()}>
           Save
         </button>
       </div>

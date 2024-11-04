@@ -8,11 +8,9 @@ export default async function Home() {
   //   (res) => res.json()
   // );
 
-  // const t = await prisma.language.create({
-  //   data: {
+  // await prisma.language.delete({
+  //   where: {
   //     code: "de",
-  //     englishName: "German",
-  //     nativeName: "Deutsch",
   //   },
   // });
 

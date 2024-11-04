@@ -20,14 +20,4 @@ export const LANGUAGES = [
     englishName: "Spanish",
     nativeName: "Español",
   },
-  {
-    code: "de",
-    englishName: "German",
-    nativeName: "Deutsch",
-  },
-  {
-    code: "it",
-    englishName: "Italian",
-    nativeName: "Italiano",
-  },
 ];

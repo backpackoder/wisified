@@ -62,14 +62,6 @@ export async function GET(req: Request, { params }: { params: { queries: string[
   const include = {
     createdBy: true,
     translations: {
-      where: {
-        language: {
-          code: {
-            startsWith: language,
-            endsWith: language,
-          },
-        },
-      },
       include: {
         language: true,
       },

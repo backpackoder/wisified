@@ -1,56 +1,63 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 
 // Components
 import { AuthCheck } from "@/components/AuthCheck";
 import { EmailUpdatesItem, ImageProfileItem, LanguageItem, UserItem } from "./Items";
 
+// Assets
+import NO_PROFILE_IMAGE from "@/app/assets/images/no-profile-image.jpg";
+
 // Styles
 import { styles } from "@/app/assets/styles/styles";
 
-// Commons
-import { IMAGES } from "@/commons/commons";
-
 // Types
-import { User } from "@prisma/client";
+import { useAppContext } from "@/app/context/AppProvider";
+import { Action, State } from "./types";
+
+// Utils
+import { initialState } from "./utils/initialState";
 
 export default function Settings() {
-  const [user, setUser] = useState<User | null | undefined>(null);
-  const [isRefresh, setIsRefresh] = useState(false);
+  const { user } = useAppContext();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  console.log("state.image", state.image);
 
-  const data = {
-    user: {
-      username: user?.username,
-      name: user?.name ?? "Unknown",
-      image: user?.image ?? IMAGES.DEFAULT_PROFILE_IMAGE,
-      bio: user?.bio ?? "",
-      nationality: user?.nationality ?? "Unknown",
-    },
-    settings: {
-      emailUpdates: user?.emailUpdates ?? false,
-      language: user?.language ?? "en",
-    },
-  };
+  function reducer(state: State, action: Action): State {
+    switch (action.type) {
+      case "INITIATING":
+        return {
+          ...state,
+          username: action.payload.username,
+          name: action.payload.name,
+          image: action.payload.image,
+          bio: action.payload.bio,
+          nationality: action.payload.nationality,
+        };
 
-  function handleModifiedData() {
-    setIsRefresh((prev) => !prev);
+      case action.type:
+        return { ...state, [action.type]: action.payload };
+
+      default:
+        return state;
+    }
   }
 
   useEffect(() => {
-    async function getSettings() {
-      const res = await fetch("/api/user", {
-        method: "GET",
-      });
-
-      const user: User | null | undefined = await res.json();
-
-      setUser(user);
-    }
-
-    getSettings();
-  }, [isRefresh]);
+    if (!user) return;
+    dispatch({
+      type: "INITIATING",
+      payload: {
+        username: user.username,
+        name: user.name ?? "Unknown",
+        image: user.image ?? NO_PROFILE_IMAGE.src,
+        bio: user.bio ?? "",
+        nationality: user.nationality ?? "Unknown",
+      },
+    });
+  }, [user]);
 
   return (
     <AuthCheck>
@@ -58,17 +65,19 @@ export default function Settings() {
         <section className="flex flex-col items-center justify-center gap-8">
           <h2 className="font-semibold text-4xl">⚙️ Settings</h2>
 
-          <article className="flex flex-wrap items-center justify-center gap-8">
+          <article className="flex flex-col items-center justify-center gap-8">
             <div className="max-w-500 duration-150">
               <ImageProfileItem
                 type="image"
+                value={state.image}
+                state={state}
+                dispatch={dispatch}
                 user={user}
-                handleModifiedData={handleModifiedData}
                 Component={
                   <div className="rounded-full">
                     <Image
-                      src={data.user.image}
-                      alt={`${data.user.name}'s profile`}
+                      src={state.image}
+                      alt={`${state.name}'s profile`}
                       width={300}
                       height={300}
                       className={`${styles.imgSquareCropped} rounded-full cursor-pointer`}
@@ -78,46 +87,48 @@ export default function Settings() {
               />
             </div>
 
-            <div className="flex flex-col items-start justify-center gap-2 max-w-500">
+            <div className="flex flex-wrap gap-4 max-w-500">
               <UserItem
+                user={user}
                 type="username"
-                user={user}
-                handleModifiedData={handleModifiedData}
-                Component={<p className="text-center">{data.user.username}</p>}
+                value={state.username}
+                state={state}
+                dispatch={dispatch}
+                Component={<p className="text-center">{state.username}</p>}
               />
 
               <UserItem
+                user={user}
                 type="name"
-                user={user}
-                handleModifiedData={handleModifiedData}
-                Component={<p className="text-center">{data.user.name}</p>}
+                value={state.name}
+                state={state}
+                dispatch={dispatch}
+                Component={<p className="text-center">{state.name}</p>}
               />
 
               <UserItem
+                user={user}
                 type="nationality"
-                user={user}
-                handleModifiedData={handleModifiedData}
-                Component={<p className="text-center">{data.user.nationality}</p>}
+                value={state.nationality}
+                state={state}
+                dispatch={dispatch}
+                Component={<p className="text-center">{state.nationality}</p>}
               />
 
               <UserItem
+                user={user}
                 type="bio"
-                user={user}
-                handleModifiedData={handleModifiedData}
-                Component={<p>{data.user.bio}</p>}
+                value={state.bio}
+                state={state}
+                dispatch={dispatch}
+                Component={<p>{state.bio}</p>}
               />
 
-              <LanguageItem
-                typeSettings="language"
-                user={user}
-                handleModifiedData={handleModifiedData}
-              />
+              <div className="flex flex-col items-center justify-evenly p-2 border-2 rounded-lg">
+                <LanguageItem typeSettings="language" user={user} />
 
-              <EmailUpdatesItem
-                typeSettings="emailUpdates"
-                user={user}
-                handleModifiedData={handleModifiedData}
-              />
+                <EmailUpdatesItem typeSettings="emailUpdates" user={user} />
+              </div>
             </div>
           </article>
         </section>

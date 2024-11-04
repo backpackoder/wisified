@@ -12,7 +12,7 @@ import { languageIndexFinder } from "@/utils/languageIndexFinder";
 import { ROUTES } from "@/commons/commons";
 
 // Components
-import { AuthorImg } from "@/components/quotes/AuthorImg";
+import { AuthorImg } from "@/components/quotes/quote/items/AuthorImg";
 import { useEffect, useState } from "react";
 import { getWikiData } from "@/utils/getWikiData";
 

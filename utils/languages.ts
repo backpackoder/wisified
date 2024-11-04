@@ -21,7 +21,23 @@ export const appLanguages = {
     code: "es",
     flag: "/flags/es.jpg",
   },
+  // de: {
+  //   title: "Deutsch",
+  //   englishTitle: "German",
+  //   nativeTitle: "Deutsch",
+  //   code: "de",
+  //   flag: "/flags/de.jpg",
+  // },
+  // it: {
+  //   title: "Italiano",
+  //   englishTitle: "Italian",
+  //   nativeTitle: "Italiano",
+  //   code: "it",
+  //   flag: "/flags/it.jpg",
+  // },
 };
+
+export type Iso = keyof typeof appLanguages;
 
 export const defaultAppLanguage = appLanguages.en;
 

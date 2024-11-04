@@ -5,7 +5,7 @@ export type ModifyButtonProps = {
 export function ModifyButton({ setIsEditing }: ModifyButtonProps) {
   return (
     <button
-      className="bg-green-300 p-2 rounded-lg duration-150 hover:bg-green-400"
+      className="bg-blue-300 text-sm p-2 rounded-lg mx-auto duration-150 hover:bg-blue-400"
       onClick={() => setIsEditing((prev) => !prev)}
     >
       Modify

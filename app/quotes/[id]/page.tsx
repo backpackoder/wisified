@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 // Components
-import { QuoteItem } from "@/components/quotes/QuoteItem";
+import { QuoteItem } from "@/components/quotes/quote";
 
 // Utils
 import { PRISMA_CALLS } from "@/utils/prismaCalls";

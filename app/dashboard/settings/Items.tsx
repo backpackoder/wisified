@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, useContext, useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 
 // Components
-import { UserDataEditor } from "../UserDataEditor";
+import { UserDataEditor } from "./UserDataEditor";
 import { ModifyButton } from "./ModifyBtn";
 
 // Utils
@@ -12,10 +12,35 @@ import toCapitalize from "@/utils/toCapitalize";
 
 // Types
 import { UserItemProps, UserSettingsItemProps } from "@/types/props";
-import { appLanguages } from "@/utils/languages";
+import { appLanguages, Iso } from "@/utils/languages";
+import { AppContext } from "@/app/context/AppContext";
+import { API, ManyDataCountData, PrismaAuthor } from "@/types/prisma";
+import Image from "next/image";
+import { getWikiData } from "@/utils/getWikiData";
+import { Action } from "./types";
+import { useSession } from "next-auth/react";
+import { IMAGES } from "@/commons/commons";
 
-export function ImageProfileItem({ type, user, handleModifiedData, Component }: UserItemProps) {
+export function ImageProfileItem({ type, value, state, dispatch, Component }: UserItemProps) {
+  const session = useSession();
+  const { user, updateUserSettings } = useContext(AppContext);
+  const [authors, setAuthors] = useState<API<ManyDataCountData<PrismaAuthor>>>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const actualProfileImage = session.data?.user?.image ?? user?.image ?? "";
+
+  console.log("authors ImageProfileItem", authors);
+  console.log("session", session);
+
+  useEffect(() => {
+    async function getAuthors() {
+      const res = await fetch("/api/authors");
+      const data: API<ManyDataCountData<PrismaAuthor>> = await res.json().then((data) => data);
+
+      setAuthors(data);
+    }
+
+    getAuthors();
+  }, []);
 
   return (
     <div className="flex flex-col flex-wrap gap-2">
@@ -36,15 +61,50 @@ export function ImageProfileItem({ type, user, handleModifiedData, Component }: 
           />
         </div>
 
-        {isEditing && (
+        {isEditing && session && (
           <div className="flex flex-col items-start justify-center gap-2">
-            <p className="font-semibold">Link:</p>
-            <UserDataEditor
-              type={type}
-              user={user}
-              setIsEditing={setIsEditing}
-              handleModifiedData={handleModifiedData}
-            />
+            <p className="font-semibold">Pick an avatar:</p>
+
+            {/* <input
+              type="text"
+              name={type}
+              defaultValue={user?.image ?? state.image}
+              value={state.image}
+              className="p-2 border-2 rounded-lg"
+              onChange={(e) => dispatch({ type: "image", payload: e.target.value  })}
+            /> */}
+
+            <button
+              className="bg-red-300 p-2 rounded-lg"
+              onClick={() => {
+                updateUserSettings({ value: state.image, typeSettings: "image" });
+                setIsEditing(false);
+              }}
+            >
+              Save
+            </button>
+
+            <div className="flex flex-wrap gap-2">
+              <div className="w-24 h-24">
+                <Image
+                  src={actualProfileImage}
+                  alt={`${actualProfileImage ?? "Your profile"}'s picture`}
+                  width={50}
+                  height={0}
+                  className="w-full h-full object-cover hover:cursor-pointer"
+                  onClick={() =>
+                    dispatch({
+                      type: "image",
+                      payload: actualProfileImage,
+                    })
+                  }
+                />
+              </div>
+
+              {authors?.data.map((author) => {
+                return <AuthorPicture key={author.id} author={author} dispatch={dispatch} />;
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -52,20 +112,47 @@ export function ImageProfileItem({ type, user, handleModifiedData, Component }: 
   );
 }
 
-export function UserItem({ type, user, Component, handleModifiedData }: UserItemProps) {
+function AuthorPicture({ author, dispatch }: { author: PrismaAuthor; dispatch: Dispatch<Action> }) {
+  const [authorPicture, setAuthorPicture] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!author) return;
+
+    getWikiData(author.englishName).then((data) =>
+      setAuthorPicture(data?.originalimage?.source ?? "")
+    );
+  }, [author]);
+
+  return authorPicture ? (
+    <div className="w-24 h-24">
+      <Image
+        src={authorPicture}
+        alt={`${author.englishName}'s picture`}
+        width={50}
+        height={0}
+        className="w-full h-full object-cover hover:cursor-pointer"
+        onClick={() => dispatch({ type: "image", payload: authorPicture })}
+      />
+    </div>
+  ) : null;
+}
+
+export function UserItem({ type, value, Component, state, dispatch, user }: UserItemProps) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="flex flex-col flex-wrap items-start gap-2 max-w-xs">
+    <div className="flex flex-col flex-wrap items-start gap-2 max-w-xs p-2 border-2 rounded-lg">
       <h3 className="font-semibold">{toCapitalize(type)}:</h3>
 
       <div className="py-2 px-4 rounded-lg border-2">
         {isEditing ? (
           <UserDataEditor
             type={type}
-            user={user}
+            value={value}
             setIsEditing={setIsEditing}
-            handleModifiedData={handleModifiedData}
+            state={state}
+            dispatch={dispatch}
+            user={user}
           />
         ) : (
           Component
@@ -78,23 +165,7 @@ export function UserItem({ type, user, Component, handleModifiedData }: UserItem
 }
 
 export function LanguageItem({ typeSettings, user }: Omit<UserSettingsItemProps, "Component">) {
-  async function updateUserSettings(e: React.ChangeEvent<HTMLSelectElement>) {
-    const value = e.target.value;
-
-    const body = {
-      [typeSettings]: value,
-    };
-
-    const res = await fetch("/api/user", {
-      method: "PUT",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    value !== user[typeSettings] && res.json();
-  }
+  const { changeLanguage } = useContext(AppContext);
 
   return (
     <div className="flex items-center justify-center gap-2">
@@ -103,8 +174,9 @@ export function LanguageItem({ typeSettings, user }: Omit<UserSettingsItemProps,
       <select
         name={typeSettings}
         defaultValue={user.language.toLocaleString() ?? ""}
+        // value={state.language.toLocaleString() ?? ""}
         className="p-2 border-2 rounded-lg"
-        onChange={(e) => updateUserSettings(e)}
+        onChange={(e) => changeLanguage(e.target.value as Iso)}
       >
         {Object.values(appLanguages).map((language, index) => {
           return (
@@ -119,23 +191,7 @@ export function LanguageItem({ typeSettings, user }: Omit<UserSettingsItemProps,
 }
 
 export function EmailUpdatesItem({ typeSettings, user }: Omit<UserSettingsItemProps, "Component">) {
-  async function updateUserSettings(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.checked;
-
-    const body = {
-      [typeSettings]: value,
-    };
-
-    const res = await fetch("/api/user", {
-      method: "PUT",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    value !== user[typeSettings] && res.json();
-  }
+  const { updateUserSettings } = useContext(AppContext);
 
   return user ? (
     <div className="flex items-center justify-center gap-2">
@@ -146,7 +202,7 @@ export function EmailUpdatesItem({ typeSettings, user }: Omit<UserSettingsItemPr
         name={typeSettings}
         defaultChecked={user.emailUpdates}
         className="p-2 border-2 rounded-lg"
-        onChange={(e) => updateUserSettings(e)}
+        onChange={(e) => updateUserSettings({ value: e.target.checked, typeSettings })}
       />
     </div>
   ) : null;

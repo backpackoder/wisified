@@ -4,7 +4,7 @@ import { AuthorWrapper } from "@/components/authors/AuthorWrapper";
 
 // Types
 import { State } from "../types";
-import { AuthorImg } from "@/components/quotes/AuthorImg";
+import { AuthorImg } from "@/components/quotes/quote/items/AuthorImg";
 
 type PreviewProps = {
   state: State;

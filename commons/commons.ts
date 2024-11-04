@@ -1,12 +1,7 @@
 // Assets
 import NO_PROFILE_IMAGE from "@/app/assets/images/no-profile-image.jpg";
 import { AuthorKeyOf } from "@/types/getFilters";
-import {
-  PrismaAuthor,
-  PrismaAuthorTranslation,
-  PrismaQuote,
-  PrismaQuoteTranslation,
-} from "@/types/prisma";
+import { Iso } from "@/utils/languages";
 
 // MAIN
 export const TITLE = "My wise quotes";
@@ -87,4 +82,12 @@ export const FILTERS: FILTERSType = {
 export const IMAGES = {
   DEFAULT_PROFILE_IMAGE: NO_PROFILE_IMAGE,
   NOT_FOUND_PROFILE_IMAGE: NO_PROFILE_IMAGE,
+};
+export const FLAGS = {
+  CHOOSE: (country: Iso) => `/flags/${country}.jpg`,
+  UNITED_KINGDOM: "/flags/en.jpg",
+  FRANCE: "/flags/fr.jpg",
+  SPAIN: "/flags/es.jpg",
+  GERMANY: "/flags/de.jpg",
+  ITALY: "/flags/it.jpg",
 };

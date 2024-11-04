@@ -68,8 +68,9 @@ export function getFilters({ tags, queryParamsTag }: GetFiltersProps) {
     title: "language",
     label: "Language",
     values: {
-      default: { value: "en", label: "English" },
+      default: { value: "default", label: "All" },
       others: [
+        { value: "default", label: "all" },
         ...LANGUAGES.map((language) => {
           return { value: language.code, label: language.nativeName };
         }),

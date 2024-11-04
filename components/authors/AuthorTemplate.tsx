@@ -3,8 +3,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 // Components
-import { AuthorImg } from "../quotes/AuthorImg";
-import { QuoteItem } from "../quotes/QuoteItem";
+import { AuthorImg } from "../quotes/quote/items/AuthorImg";
+import { QuoteItem } from "../quotes/quote";
 
 // Utils
 import { authOptions } from "@/utils/authOptions";
@@ -49,7 +49,11 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
         include: {
           createdBy: true,
           author: true,
-          translations: true,
+          translations: {
+            include: {
+              language: true,
+            },
+          },
           tags: true,
         },
       },

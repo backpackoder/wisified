@@ -7,7 +7,7 @@ import { useEffect, useReducer, useState } from "react";
 import { NoResultsFound } from "@/components/NoResultsFound";
 import { Navbar } from "@/components/navbars/Navbar";
 import { Pagination } from "@/components/Pagination";
-import { QuoteItem } from "@/components/quotes/QuoteItem";
+import { QuoteItem } from "@/components/quotes/quote";
 
 // Commons
 import { FILTERS } from "@/commons/commons";

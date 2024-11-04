@@ -79,6 +79,7 @@ model User {
   comments         Comment[]
   commentLikes     CommentLike[]
   commentReplies   CommentReply[]
+  CommentReplyLike CommentReplyLike[]
 }
 
 model Follows {
@@ -119,8 +120,8 @@ model FavoriteAuthor {
 model Author {
   id              String              @id @default(cuid())
   createdAt       DateTime            @default(now())
-  createdBy       User                @relation("createdAuthors", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
+  createdBy       User?                @relation("createdAuthors", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     String?
   updatedAt       DateTime            @updatedAt
   updatedBy       User[]              @relation("updatedAuthors")
 
@@ -154,8 +155,8 @@ model AuthorTranslation {
 model Quote {
   id              String            @id @default(cuid())
   createdAt       DateTime          @default(now())
-  createdBy       User              @relation("createdQuotes", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById     String
+  createdBy       User?              @relation("createdQuotes", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById     String?
   updatedAt       DateTime?          @updatedAt
   updatedBy       User[]             @relation("updatedQuotes")
 
@@ -164,7 +165,6 @@ model Quote {
   author          Author            @relation(fields: [authorId], references: [id])
   authorId        String
   tags            Tag[]
-  sources          String[]
   
   favoritedBy     User[]
   favoritedById   String[]
@@ -177,6 +177,7 @@ model QuoteTranslation {
 
   content         String
   isOriginal      Boolean
+  sources          String[]
 
   quote           Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   quoteId         String
@@ -234,7 +235,6 @@ model CommentLike {
   userId          String
   comment         Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId       String
-  replies         CommentReply[]
 
   @@unique([userId, commentId])
 }
@@ -245,12 +245,25 @@ model CommentReply {
   updatedAt       DateTime @updatedAt
 
   content         String
-  likes           CommentLike[]
+  likes           CommentReplyLike[]
 
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String
   comment         Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId       String
+}
+
+model CommentReplyLike {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  reply           CommentReply  @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  replyId         String
+
+  @@unique([userId, replyId])
 }
 
 model Language {

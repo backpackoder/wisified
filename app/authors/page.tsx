@@ -56,13 +56,11 @@ export default function Authors() {
         <Navbar type="authors" data={authors} dispatch={dispatch} />
 
         {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}
-
         <article className="flex flex-wrap justify-center gap-8">
           {authors.data.map((author, index) => {
             return <AuthorCard key={index} author={author} language={state.language} />;
           })}
         </article>
-
         {authors.totalPages > 1 && <Pagination data={authors} state={state} dispatch={dispatch} />}
       </section>
     )

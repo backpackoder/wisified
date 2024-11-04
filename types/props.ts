@@ -1,9 +1,16 @@
 // Types
 import { Items } from "./navbar";
 import { DispatchQuotesAndAuthors } from "./authors";
-import { Author, Quote, QuoteTranslation, Tag, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { ManyData, PrismaAuthor, PrismaQuote } from "./prisma";
 import { StaticImageData } from "next/image";
+import { Dispatch } from "react";
+import { Action, State } from "@/app/dashboard/settings/types";
+
+// PROVIDER
+export type ProviderProps = {
+  children: React.ReactNode;
+};
 
 // LAYOUT
 export type LayoutProps = {
@@ -96,15 +103,16 @@ export type UserProfilePartsProps = {
 
 // SETTINGS
 export type UserItemProps = {
-  type: keyof User;
+  type: keyof Pick<User, "image" | "username" | "name" | "nationality" | "bio">;
+  value: string;
+  state: State;
+  dispatch: Dispatch<Action>;
   user: User;
-  handleModifiedData: () => void;
   Component: JSX.Element;
 };
 
 export type UserSettingsItemProps = {
-  typeSettings: keyof User;
   user: User;
-  handleModifiedData: () => void;
+  typeSettings: keyof User;
   Component: JSX.Element;
 };

@@ -14,6 +14,13 @@ import {
 
 export type API<T> = T | null | undefined;
 
+export type Array<T> = T[];
+
+export type ManyDataCountData<T> = {
+  count: number;
+  data: T[];
+};
+
 export type ManyData<T> = {
   totalCount: number;
   countOnActualPage: number;

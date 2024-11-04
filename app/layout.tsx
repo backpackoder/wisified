@@ -1,6 +1,9 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 
+// Context
+import { AppProvider } from "./context/AppProvider";
+
 // Components
 import { AuthProvider } from "./AuthProvider";
 import { NavbarMain } from "@/components/navbars/NavbarMain";
@@ -16,18 +19,20 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      {/* CREER UN APP PROVIDER POUR QUE QUAND ON CHANGE LA LANGUE DANS LE NAVBAR
+      <AppProvider>
+        {/* CREER UN APP PROVIDER POUR QUE QUAND ON CHANGE LA LANGUE DANS LE NAVBAR
       SA PUISSE CHANGER LA LANGUE DANS TOUT LE SITE ET EN PARTICULIER POUR LES QUOTES !!! */}
 
-      <html lang="en">
-        <body className={`${inter.className} mt-[75px] sm:mt-0`}>
-          <NavbarMain />
+        <html lang="en">
+          <body className={`${inter.className} mt-[75px] sm:mt-0`}>
+            <NavbarMain />
 
-          {children}
+            {children}
 
-          <Footer />
-        </body>
-      </html>
+            <Footer />
+          </body>
+        </html>
+      </AppProvider>
     </AuthProvider>
   );
 }

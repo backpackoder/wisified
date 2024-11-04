@@ -12,7 +12,7 @@ import { SignInButton } from "../AuthButtons";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
-const { HOME, QUOTES, AUTHORS, ABOUT } = ROUTES;
+const { HOME, QUOTES, AUTHORS } = ROUTES;
 
 // Types
 import { NavbarItemsProps } from "@/types/props";
@@ -21,12 +21,12 @@ import NavBarMainLanguages from "./languages";
 
 export function NavbarMain() {
   const [isOpen, setIsOpen] = useState(false);
+  console.log("isOpen", isOpen);
 
   const routes: Items[] = [
     { icon: <FaHome />, label: "Home", path: HOME },
     { icon: <FaFeather />, label: "Quotes", path: QUOTES },
     { icon: <FaUserEdit />, label: "Authors", path: AUTHORS },
-    // { icon: <FaQuestion />, label: "About", path: ABOUT },
   ];
 
   return (
@@ -49,12 +49,12 @@ function NavBarItem({ items, setIsOpen }: NavbarItemsProps) {
   const pathname = usePathname();
 
   return (
-    <ul className="flex flex-col items-start gap-4 p-2 sm:flex-row sm:p-0">
+    <ul className="flex flex-col items-center gap-4 p-2 sm:flex-row sm:p-0">
       {items.map((item, index) => {
         const isActive = pathname === item.path;
 
         return (
-          <li key={index} className="w-full" onClick={() => setIsOpen((prev) => !prev)}>
+          <li key={index} className="" onClick={() => setIsOpen((prev) => !prev)}>
             <Link
               href={item.path}
               className={`flex items-center gap-2 ${
@@ -71,7 +71,7 @@ function NavBarItem({ items, setIsOpen }: NavbarItemsProps) {
         <NavBarMainLanguages />
       </li>
 
-      <li className="w-full">
+      <li className="">
         <SignInButton setIsOpen={setIsOpen} />
       </li>
     </ul>
