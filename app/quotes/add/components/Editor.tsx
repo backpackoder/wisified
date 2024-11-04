@@ -58,12 +58,7 @@ export function Editor({ translations, state, dispatch }: EditorProps) {
         handleContent={handleContent}
       />
 
-      <Tags
-        translations={translations}
-        state={state}
-        dispatch={dispatch}
-        selectedLanguage={selectedLanguage}
-      />
+      <Tags state={state} dispatch={dispatch} selectedLanguage={selectedLanguage} />
     </EditorWrapper>
   ) : null;
 }
@@ -154,28 +149,12 @@ function Content({ state, contentIndexFinder, selectedLanguage, handleContent }:
 }
 
 export type TagsProps = {
-  translations: FullLanguage[];
   state: State;
   dispatch: Dispatch<Action>;
   selectedLanguage: FullLanguage;
 };
 
-function Tags({ translations, state, dispatch, selectedLanguage }: TagsProps) {
-  // const [tags, setTags] = useState<API<ManyData<PrismaTag>>>(null);
-  // console.log("tags: ", tags);
-
-  // useEffect(() => {
-  //   async function getTags() {
-  //     const res = await fetch("/api/tags", {
-  //       method: "GET",
-  //     });
-
-  //     await res.json().then((res) => setTags(res));
-  //   }
-
-  //   getTags();
-  // }, [dispatch, state.language, translations]);
-
+function Tags({ state, dispatch, selectedLanguage }: TagsProps) {
   return (
     <EditorItemWrapper>
       <p>Select the tags</p>

@@ -24,7 +24,6 @@ export type QuoteIconsProps = {
 
 export function Icons({ quote, language, setLanguageQuote }: QuoteIconsProps) {
   const { appLanguages } = useContext(AppContext);
-  console.log("appLanguages", appLanguages);
 
   return appLanguages ? (
     <div className="flex items-center justify-between gap-2 w-full">

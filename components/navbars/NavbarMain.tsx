@@ -21,7 +21,6 @@ import NavBarMainLanguages from "./languages";
 
 export function NavbarMain() {
   const [isOpen, setIsOpen] = useState(false);
-  console.log("isOpen", isOpen);
 
   const routes: Items[] = [
     { icon: <FaHome />, label: "Home", path: HOME },

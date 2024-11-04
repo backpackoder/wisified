@@ -16,7 +16,6 @@ export default function NavBarMainLanguages() {
   const actualLanguageOfUser = Object.values(appLanguages).find(
     (appLanguage) => appLanguage.code === language
   );
-  console.log("actualLanguageOfUser", actualLanguageOfUser);
 
   const initialState: State = {
     isActive: false,
