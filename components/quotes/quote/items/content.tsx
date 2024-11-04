@@ -3,13 +3,13 @@
 import Link from "next/link";
 
 // Types
-import { PrismaQuoteTranslation } from "@/types/prisma";
+import { FullQuoteTranslation } from "@/types/prisma";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
 
 export type ContentProps = {
-  translation: PrismaQuoteTranslation;
+  translation: FullQuoteTranslation;
 };
 
 export function Content({ translation }: ContentProps) {
