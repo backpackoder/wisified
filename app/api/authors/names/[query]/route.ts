@@ -5,17 +5,30 @@ import { prisma } from "@/lib/prisma";
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function GET(req: Request, params: { params: { query: string } }) {
+  const name = params.params.query;
+
   const authors = await prisma.author.findMany({
     where: {
-      translations: {
-        some: {
-          name: {
-            contains: params.params.query,
+      OR: [
+        {
+          englishName: {
+            contains: name,
             mode: "insensitive",
           },
         },
-      },
+        {
+          translations: {
+            some: {
+              name: {
+                contains: name,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      ],
     },
+
     include: PRISMA_CALLS.author.include,
   });
 
