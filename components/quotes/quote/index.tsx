@@ -40,7 +40,11 @@ export function QuoteItem({ quote }: QuoteItemProps) {
         },
       });
 
-      await res.json().then((data: API<FullAuthor>) => setAuthorPicture(data?.picture));
+      const data: API<FullAuthor> = await res.json();
+
+      if (data) {
+        setAuthorPicture(data.picture);
+      }
     }
 
     fetchAuthorPicture();

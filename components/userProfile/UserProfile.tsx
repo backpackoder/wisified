@@ -37,7 +37,7 @@ export function UserProfile({ user, isProfileMine }: UserProfileProps) {
 
   return (
     <section className="flex flex-col items-center min-w-full p-0">
-      <article className="flex flex-col flex-wrap items-center justify-center gap-8 w-full p-4 sm:flex-row">
+      <article className="flex flex-col items-center justify-center gap-8 w-full p-4">
         <div className="flex flex-col items-center justify-center gap-4">
           <UserProfileName data={data} />
 

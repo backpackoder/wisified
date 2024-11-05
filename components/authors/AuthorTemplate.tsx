@@ -1,4 +1,3 @@
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
@@ -7,16 +6,13 @@ import { AuthorImg } from "../quotes/quote/items/AuthorImg";
 import { QuoteItem } from "../quotes/quote";
 
 // Utils
-import { authOptions } from "@/utils/authOptions";
 import { getWikiData } from "@/utils/getWikiData";
-import { languageIndexFinder } from "@/utils/languageIndexFinder";
 
 // Commons
 import { ROUTES } from "@/commons/commons";
 
 // Types
-import { User } from "@prisma/client";
-import { API, FullAuthor } from "@/types/prisma";
+import { FullAuthor } from "@/types/prisma";
 import { WikiAuthorDatas } from "@/app/authors/[slug]/types";
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
@@ -26,40 +22,12 @@ type AuthorTemplateProps = {
 };
 
 export async function AuthorTemplate({ author, wikiData }: AuthorTemplateProps) {
-  const session = await getServerSession(authOptions);
   const dataFromWiki = await getWikiData(author.englishName);
-
-  const currentUserId = await prisma.user
-    .findUnique({ where: { email: session?.user?.email ?? "" } })
-    .then((user) => user?.id ?? "");
-
-  const user: API<User> = await prisma.user.findUnique({
-    where: {
-      id: currentUserId,
-    },
-  });
-
-  const findIndexLanguage =
-    user && author
-      ? languageIndexFinder({
-          data: author.translations,
-          values: ["language", "code"],
-          search: user.language === "" ? "en" : user.language,
-        })
-      : 0;
-
-  const name =
-    findIndexLanguage === -1 ? author?.englishName : author?.translations[findIndexLanguage].name;
-  const description =
-    findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].description;
-  const bio = findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].bio;
-  const wikipediaLink =
-    findIndexLanguage === -1 ? "" : author?.translations[findIndexLanguage].wikipediaLink;
 
   return (
     author && (
       <>
-        <h2 className="text-5xl">{name}</h2>
+        <h2 className="text-5xl">{author.englishName}</h2>
 
         <AuthorImg picture={author.picture} authorName={author.englishName} />
 
@@ -68,7 +36,7 @@ export async function AuthorTemplate({ author, wikiData }: AuthorTemplateProps) 
         <p>
           {dataFromWiki?.extract}{" "}
           <a
-            href={wikipediaLink ?? wikiData?.wikipediaLink?.desktop}
+            href={wikiData?.wikipediaLink?.desktop}
             target="_blank"
             className="text-blue-500 hover:text-blue-800"
           >
@@ -89,7 +57,7 @@ export async function AuthorTemplate({ author, wikiData }: AuthorTemplateProps) 
         {
           <>
             {/* @ts-expect-error Async Server Component */}
-            <QuotesOfTheAuthor author={author} authorName={name} />
+            <QuotesOfTheAuthor author={author} authorName={author.englishName} />
           </>
         }
       </>
