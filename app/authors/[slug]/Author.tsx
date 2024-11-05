@@ -1,10 +1,17 @@
 import { prisma } from "@/lib/prisma";
+
+// Components
 import { AuthorWrapper } from "@/components/authors/AuthorWrapper";
+import { AuthorTemplate } from "@/components/authors/AuthorTemplate";
 import { AuthorNotFound } from "@/components/authors/AuthorNotFound";
+
+// Utils
 import { slugWithSpacesHandle } from "@/utils/slugWithSpacesHandle";
 import { getWikiData } from "@/utils/getWikiData";
-import { WikiAuthorDatas } from "./page";
-import { AuthorTemplate } from "@/components/authors/AuthorTemplate";
+
+// Types
+import { API } from "@/types/prisma";
+import { WikiAuthorDatas } from "./types";
 
 export default async function Author({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -22,7 +29,7 @@ export default async function Author({ params }: { params: { slug: string } }) {
 
   const wikiData = author && (await getWikiData(author.englishName));
 
-  const datas: WikiAuthorDatas = wikiData && {
+  const datas: API<WikiAuthorDatas> = wikiData && {
     name: wikiData.title,
     description: wikiData.description,
     bio: wikiData.extract,
@@ -35,7 +42,7 @@ export default async function Author({ params }: { params: { slug: string } }) {
 
   return (
     <AuthorWrapper>
-      {author ? (
+      {author && datas ? (
         <>
           {/* @ts-expect-error Async Server Component */}
           <AuthorTemplate slugWithSpaces={slugWithSpaces} wikiData={datas} />
