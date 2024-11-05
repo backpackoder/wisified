@@ -13,21 +13,38 @@ import { ROUTES } from "@/commons/commons";
 
 // Types
 import { QuoteItemProps } from "@/types/props";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/app/context/AppContext";
 
 // Utils
 import { getTranslatedQuote } from "@/utils/getTranslatedQuote";
 import { Iso } from "@/utils/languages";
+import { API, FullAuthor } from "@/types/prisma";
 
 export function QuoteItem({ quote }: QuoteItemProps) {
   const { language } = useContext(AppContext);
   const [languageQuote, setLanguageQuote] = useState(language ?? "en");
+  const [authorPicture, setAuthorPicture] = useState<API<string>>(null);
 
   const translation = getTranslatedQuote({
     actualLanguage: languageQuote === language ? language : languageQuote,
     translations: quote.translations,
   });
+
+  useEffect(() => {
+    async function fetchAuthorPicture() {
+      const res = await fetch(`/api/author/${quote.author.englishName}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      await res.json().then((data: API<FullAuthor>) => setAuthorPicture(data?.picture));
+    }
+
+    fetchAuthorPicture();
+  }, [quote.author]);
 
   return quote ? (
     <QuoteContainer>
@@ -39,7 +56,11 @@ export function QuoteItem({ quote }: QuoteItemProps) {
 
       <Content translation={translation} />
 
-      <AuthorImg authorName={quote.author.englishName} image={{ width: 100 }} />
+      <AuthorImg
+        picture={authorPicture}
+        authorName={quote.author.englishName}
+        image={{ width: 100 }}
+      />
 
       <Link
         href={ROUTES.AUTHOR(quote.author.englishName)}

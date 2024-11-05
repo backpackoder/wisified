@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     data: {
       createdBy: { connect: { id: data.creatorId } },
       englishName: data.englishName,
+      picture: data.picture,
       translations: {
         create: languages,
       },

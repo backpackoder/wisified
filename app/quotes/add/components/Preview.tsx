@@ -25,7 +25,7 @@ export function Preview({ author, username, state, translations }: PreviewProps)
   return (
     <PreviewWrapper>
       <QuoteContainer>
-        <p>{`- "${state.contents[contentIndexFinder]?.content}."`}</p>
+        <p>{`- "${state.contents[contentIndexFinder]?.content}"`}</p>
 
         <AuthorImg authorName={author.englishName} image={{ width: 100 }} />
 

@@ -51,7 +51,7 @@ export function AppProvider({ children }: ProviderProps) {
     }
 
     getUserData();
-  }, [language]);
+  }, []);
 
   useEffect(() => {
     async function getAppLanguages() {
@@ -70,12 +70,8 @@ export function AppProvider({ children }: ProviderProps) {
   const contextValue = {
     // API
     user,
-
-    // States
     language,
-    setLanguage,
     appLanguages,
-    setAppLanguages,
 
     // Functions
     updateUserSettings,

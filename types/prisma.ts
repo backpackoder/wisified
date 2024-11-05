@@ -131,33 +131,6 @@ export type FullUser = Prisma.UserGetPayload<{
   };
 }>;
 
-export type FullAuthorAndQuote = Prisma.AuthorGetPayload<{
-  include: {
-    createdBy: true;
-    favoriteAuthors: true;
-    favoritedBy: true;
-    quotes: {
-      include: {
-        author: true;
-        comments: true;
-        createdBy: true;
-        favoritedBy: true;
-        favorites: true;
-        tags: true;
-        translations: {
-          include: {
-            language: true;
-            quote: true;
-          };
-        };
-        updatedBy: true;
-      };
-    };
-    translations: true;
-    updatedBy: true;
-  };
-}>;
-
 // OLD PRISMA CALLS
 
 // export interface PrismaUser extends User {

@@ -7,23 +7,12 @@ import { AuthorNotFound } from "@/components/authors/AuthorNotFound";
 
 // Utils
 import { slugWithSpacesHandle } from "@/utils/slugWithSpacesHandle";
+import { getWikiData } from "@/utils/getWikiData";
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 // Types
-import { getWikiData } from "@/utils/getWikiData";
-
-export type WikiAuthorDatas =
-  | {
-      name: string;
-      description: string;
-      bio: string;
-      wikipediaLink: {
-        desktop?: string;
-        mobile?: string;
-      };
-      imageSrc?: string;
-    }
-  | null
-  | undefined;
+import { API } from "@/types/prisma";
+import { WikiAuthorDatas } from "./types";
 
 export default async function Author({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -34,15 +23,13 @@ export default async function Author({ params }: { params: { slug: string } }) {
     where: {
       englishName: slugWithSpaces,
     },
-    include: {
-      translations: true,
-      quotes: true,
-    },
+
+    include: PRISMA_CALLS.author.include,
   });
 
   const wikiData = author && (await getWikiData(author.englishName));
 
-  const datas: WikiAuthorDatas = wikiData && {
+  const datas: API<WikiAuthorDatas> = wikiData && {
     name: wikiData.title,
     description: wikiData.description,
     bio: wikiData.extract,
@@ -55,10 +42,10 @@ export default async function Author({ params }: { params: { slug: string } }) {
 
   return (
     <AuthorWrapper>
-      {author ? (
+      {author && wikiData ? (
         <>
           {/* @ts-expect-error Async Server Component */}
-          <AuthorTemplate slugWithSpaces={slugWithSpaces} wikiData={datas} />
+          <AuthorTemplate author={author} wikiData={datas} />
         </>
       ) : (
         <AuthorNotFound authorName={slugWithSpaces} />

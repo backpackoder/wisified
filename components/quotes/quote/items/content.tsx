@@ -14,7 +14,7 @@ export type ContentProps = {
 
 export function Content({ translation }: ContentProps) {
   return (
-    <Link href={ROUTES.QUOTE(translation.id)} className="cursor-pointer hover:text-[#a3a3a3]">
+    <Link href={ROUTES.QUOTE(translation.quote.id)} className="cursor-pointer hover:text-[#a3a3a3]">
       {`- "${translation.content}"`}
     </Link>
   );

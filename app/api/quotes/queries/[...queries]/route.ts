@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 // Commons
 import { FILTERS } from "@/commons/commons";
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 export async function GET(req: Request, { params }: { params: { queries: string[] } }) {
   function defaultChecker(value: string) {
@@ -15,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { queries: string[
   const order = defaultChecker(params.queries[3]);
   const language = defaultChecker(params.queries[4]);
   const tag = defaultChecker(params.queries[5]);
-  const author = defaultChecker(params.queries[6]);
+  // const author = defaultChecker(params.queries[6]);
 
   const where = language
     ? {
@@ -46,88 +47,27 @@ export async function GET(req: Request, { params }: { params: { queries: string[
               }
             : undefined,
 
-        author: {
-          translations: {
-            some: {
-              name: {
-                startsWith: author,
-                endsWith: author,
-              },
-            },
-          },
-        },
+        // author: {
+        //   translations: {
+        //     some: {
+        //       name: {
+        //         startsWith: author,
+        //         endsWith: author,
+        //       },
+        //     },
+        //   },
+        // },
       }
     : undefined;
 
-  const include = {
-    createdBy: true,
-    translations: {
-      include: {
-        language: true,
-      },
-    },
-    tags: {
-      include: {
-        translations: {
-          where: {
-            name: {
-              startsWith: tag,
-              endsWith: tag,
-            },
-          },
-          include: {
-            language: true,
-          },
-        },
-      },
-    },
-    author: {
-      include: {
-        translations: true,
-      },
-    },
-    comments: {
-      include: {
-        user: true,
-        likes: {
-          include: {
-            user: true,
-            replies: {
-              include: {
-                user: true,
-                likes: {
-                  include: {
-                    user: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        replies: {
-          include: {
-            user: true,
-            likes: {
-              include: {
-                user: true,
-              },
-            },
-          },
-        },
-      },
-    },
-  };
-
   const totalCount = await prisma.quote.findMany({
     where,
-
-    include,
+    include: PRISMA_CALLS.quote.include,
   });
 
   const quotes = await prisma.quote.findMany({
     where,
-
-    include,
+    include: PRISMA_CALLS.quote.include,
 
     orderBy: {
       [sortBy]: order,

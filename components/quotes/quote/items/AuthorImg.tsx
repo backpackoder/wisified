@@ -14,10 +14,12 @@ import { AuthorImgProps } from "@/types/props";
 import { API } from "@/types/prisma";
 import { wikiSummary } from "@/types/wikiResponse";
 
-export function AuthorImg({ authorName, image }: AuthorImgProps) {
+export function AuthorImg({ picture, authorName, image }: AuthorImgProps) {
   const [wikipedia, setWikipedia] = useState<API<wikiSummary>>(null);
 
   useEffect(() => {
+    if (picture) return;
+
     if (!authorName) {
       setWikipedia(null);
     }
@@ -25,11 +27,11 @@ export function AuthorImg({ authorName, image }: AuthorImgProps) {
     if (authorName) {
       getWikiData(authorName).then((data) => setWikipedia(data));
     }
-  }, [authorName]);
+  }, [picture, authorName]);
 
   return (
     <Image
-      src={wikipedia?.originalimage?.source ?? IMAGES.DEFAULT_PROFILE_IMAGE}
+      src={picture ?? wikipedia?.originalimage?.source ?? IMAGES.DEFAULT_PROFILE_IMAGE}
       alt={`${authorName}'s profile image`}
       width={image?.width ?? 100}
       height={image?.height ?? 0}

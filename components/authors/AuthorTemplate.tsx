@@ -15,19 +15,19 @@ import { languageIndexFinder } from "@/utils/languageIndexFinder";
 import { ROUTES } from "@/commons/commons";
 
 // Types
-import { WikiAuthorDatas } from "@/app/authors/[slug]/page";
 import { User } from "@prisma/client";
-import { API, FullAuthorAndQuote } from "@/types/prisma";
+import { API, FullAuthor } from "@/types/prisma";
+import { WikiAuthorDatas } from "@/app/authors/[slug]/types";
 import { PRISMA_CALLS } from "@/utils/prismaCalls";
 
 type AuthorTemplateProps = {
-  slugWithSpaces: string;
+  author: FullAuthor;
   wikiData: WikiAuthorDatas;
 };
 
-export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplateProps) {
+export async function AuthorTemplate({ author, wikiData }: AuthorTemplateProps) {
   const session = await getServerSession(authOptions);
-  const dataFromWiki = await getWikiData(slugWithSpaces);
+  const dataFromWiki = await getWikiData(author.englishName);
 
   const currentUserId = await prisma.user
     .findUnique({ where: { email: session?.user?.email ?? "" } })
@@ -37,14 +37,6 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
     where: {
       id: currentUserId,
     },
-  });
-
-  const author = await prisma.author.findFirst({
-    where: {
-      englishName: slugWithSpaces,
-    },
-
-    include: PRISMA_CALLS.authorAndQuotes.include,
   });
 
   const findIndexLanguage =
@@ -69,7 +61,7 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
       <>
         <h2 className="text-5xl">{name}</h2>
 
-        <AuthorImg authorName={slugWithSpaces} />
+        <AuthorImg picture={author.picture} authorName={author.englishName} />
 
         <h3 className="text-lg">{dataFromWiki?.description}</h3>
 
@@ -86,7 +78,7 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
 
         <Link
           href={{
-            pathname: ROUTES.AUTHOR_EDIT(slugWithSpaces),
+            pathname: ROUTES.AUTHOR_EDIT(author.englishName),
             // query: `author=${author?.englishName}&id=${author?.id}`,
           }}
           className="bg-blue-500 text-white p-2 rounded-lg duration-300 hover:bg-blue-700"
@@ -106,13 +98,22 @@ export async function AuthorTemplate({ slugWithSpaces, wikiData }: AuthorTemplat
 }
 
 type QuotesOfTheAuthorProps = {
-  author: FullAuthorAndQuote;
+  author: FullAuthor;
   authorName: string;
 };
 
 async function QuotesOfTheAuthor({ author, authorName }: QuotesOfTheAuthorProps) {
+  const quotes = await prisma.quote.findMany({
+    where: {
+      authorId: author.id,
+    },
+
+    include: PRISMA_CALLS.quote.include,
+  });
+
   return (
-    author && (
+    author &&
+    quotes && (
       <div className="flex flex-col items-start gap-4 w-full">
         <h3 className=" text-xl">
           {author.quotes.length > 0
@@ -132,8 +133,7 @@ async function QuotesOfTheAuthor({ author, authorName }: QuotesOfTheAuthorProps)
           Add a quote
         </Link>
 
-        {author.quotes.map((quote, index) => {
-          const y = quote;
+        {quotes.map((quote, index) => {
           return (
             <>
               <QuoteItem key={index} quote={quote} />

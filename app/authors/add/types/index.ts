@@ -38,7 +38,7 @@ export type BioTranslation = {
 export type CreateAuthorClientSide = {
   creatorId: string;
   englishName: string;
-  wikipediaLink: string;
+  picture: string;
   translations: {
     language: string;
     isOriginal: boolean;

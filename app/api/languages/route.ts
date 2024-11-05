@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Utils
+import { PRISMA_CALLS } from "@/utils/prismaCalls";
+
 export async function GET(req: Request) {
   const language = await prisma.language.findMany({
-    include: {
-      authors: true,
-      tags: true,
-      quotes: true,
-    },
+    include: PRISMA_CALLS.language.include,
 
     orderBy: {
       code: "asc",

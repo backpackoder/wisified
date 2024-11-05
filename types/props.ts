@@ -2,7 +2,7 @@
 import { Items } from "./navbar";
 import { DispatchQuotesAndAuthors } from "./authors";
 import { User } from "@prisma/client";
-import { FullAuthor, FullQuote, ManyDataNavbarPages } from "./prisma";
+import { API, FullAuthor, FullQuote, ManyDataNavbarPages } from "./prisma";
 import { StaticImageData } from "next/image";
 import { Dispatch } from "react";
 import { Action, State } from "@/app/dashboard/settings/types";
@@ -77,6 +77,7 @@ export type InputAuthorProps = {
 };
 
 export type AuthorImgProps = {
+  picture?: API<string>;
   authorName: string;
   image?: {
     width?: number;

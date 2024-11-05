@@ -48,6 +48,38 @@ export const PRISMA_CALLS = {
     },
   },
 
+  quoteAndAuthor: {
+    include: {
+      author: {
+        include: {
+          createdBy: true,
+          favoriteAuthors: true,
+          favoritedBy: true,
+          quotes: true,
+          translations: {
+            include: {
+              author: true,
+              language: true,
+            },
+          },
+          updatedBy: true,
+        },
+      },
+      comments: true,
+      createdBy: true,
+      favoritedBy: true,
+      favorites: true,
+      tags: true,
+      translations: {
+        include: {
+          quote: true,
+          language: true,
+        },
+      },
+      updatedBy: true,
+    },
+  },
+
   authorTranslation: {
     include: {
       language: true,

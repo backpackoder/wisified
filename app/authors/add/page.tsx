@@ -68,7 +68,7 @@ export default function AddAuthor() {
     const body: CreateAuthorClientSide = {
       creatorId: user.id,
       englishName: state.wikiData.title,
-      wikipediaLink: state.wikiData.content_urls.desktop.page,
+      picture: state.wikiData.originalimage.source,
       translations: [],
       // translations: state.names.map((name, index) => {
       //   return {
